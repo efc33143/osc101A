@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(uuid())
+  username String @unique
+  password String // Hashed
+}
+
+model Group {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique // for url
+  imagePath   String?
+  description String?
+  tracks      Track[]
+  createdAt   DateTime @default(now())
+}
+
+model Track {
+  id          String   @id @default(uuid())
+  title       String
+  filePath    String
+  description String?
+  uploadDate  DateTime @default(now())
+  imagePath   String?
+  
+  groupId     String?
+  group       Group?   @relation(fields: [groupId], references: [id])
+  
+  comments    Comment[]
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  username  String   // Guest username
+  createdAt DateTime @default(now())
+  approved  Boolean  @default(false)
+  
+  trackId   String
+  track     Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+}
+
+model SiteConfig {
+  id               Int     @id @default(1)
+  landingImagePath String?
+  logoPath         String?
+  parallaxImagePath String?
+  tagline          String?
+  bannerText       String?
+  logoScale        Int?   @default(100)
+  aboutContent     String?
+  aboutImagePath   String?
+  aboutImage2Path  String?
+  aboutImage3Path  String?
+  heroHeight       String?
+  heroImagePath    String?
+  
+  footerText       String?
+  instagramUrl     String?
+  tiktokUrl        String?
+  youtubeUrl       String?
+  bandcampUrl      String?
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+  read      Boolean  @default(false)
+}
