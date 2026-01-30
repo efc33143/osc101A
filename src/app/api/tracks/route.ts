@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import { getSession } from '@/lib/auth'
-import { writeFile, unlink } from 'fs/promises'
-import { join } from 'path'
+import { put } from '@vercel/blob'
 
 export async function GET() {
     const tracks = await prisma.track.findMany({
@@ -27,25 +26,15 @@ export async function POST(req: NextRequest) {
         if (!file || !title) return NextResponse.json({ error: 'File and Title required' }, { status: 400 })
 
         // Audio Upload
-        const bytes = await file.arrayBuffer()
-        const buffer = Buffer.from(bytes)
         const filename = `track-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
-        const uploadDir = join(process.cwd(), 'public', 'uploads')
-
-        const fs = require('fs')
-        if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true })
-
-        await writeFile(join(uploadDir, filename), buffer)
-        const filePath = `/uploads/${filename}`
+        const { url: filePath } = await put(filename, file, { access: 'public' })
 
         // Image Upload (Optional)
         let imagePath = null
         if (imageFile) {
-            const imgBytes = await imageFile.arrayBuffer()
-            const imgBuffer = Buffer.from(imgBytes)
             const imgFilename = `cover-${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
-            await writeFile(join(uploadDir, imgFilename), imgBuffer)
-            imagePath = `/uploads/${imgFilename}`
+            const { url } = await put(imgFilename, imageFile, { access: 'public' })
+            imagePath = url
         }
 
         const track = await prisma.track.create({

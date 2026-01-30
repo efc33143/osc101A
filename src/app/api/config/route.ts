@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import { getSession } from '@/lib/auth'
-import { writeFile, unlink } from 'fs/promises'
-import { join } from 'path'
+import { put, del } from '@vercel/blob'
 
 export async function GET() {
     const config = await prisma.siteConfig.findFirst()
@@ -38,14 +37,9 @@ export async function POST(req: NextRequest) {
         const updateData: any = {}
 
         const uploadFile = async (file: File, prefix: string) => {
-            const bytes = await file.arrayBuffer()
-            const buffer = Buffer.from(bytes)
             const filename = `${prefix}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
-            const uploadDir = join(process.cwd(), 'public', 'uploads')
-            const fs = require('fs')
-            if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true })
-            await writeFile(join(uploadDir, filename), buffer)
-            return `/uploads/${filename}`
+            const { url } = await put(filename, file, { access: 'public' })
+            return url
         }
 
         if (landingFile) updateData.landingImagePath = await uploadFile(landingFile, 'bg')
@@ -98,8 +92,12 @@ export async function DELETE(req: NextRequest) {
         const config: any = await prisma.siteConfig.findFirst()
         if (config && config[field]) {
             try {
-                const filePath = join(process.cwd(), 'public', config[field])
-                await unlink(filePath)
+                // Vercel Blob delete logic if we had the URL. 
+                // Since this might be an old file URL (filesystem) or new (blob), we try catch.
+                // NOTE: @vercel/blob `del` takes the URL string.
+                if (config[field].includes('vercel-storage.com')) {
+                    await del(config[field])
+                }
             } catch (e) { console.error('File delete failed', e) }
         }
         const updated = await prisma.siteConfig.update({ where: { id: 1 }, data: { [field]: null } })
