@@ -15,48 +15,25 @@ export async function POST(req: NextRequest) {
     const session = await getSession()
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    if (!process.env.BLOB_READ_WRITE_TOKEN) {
-        console.error('Missing BLOB_READ_WRITE_TOKEN in .env')
-        return NextResponse.json({ error: 'Server configuration error: Missing BLOB token' }, { status: 500 })
-    }
-
     try {
-        const formData = await req.formData()
-        const file = formData.get('file') as File | null
-        const imageFile = formData.get('imageFile') as File | null
-        const title = formData.get('title') as string
-        const description = formData.get('description') as string
-        const groupId = formData.get('groupId') as string
+        const body = await req.json()
+        const { title, description, groupId, filePath, imagePath } = body
 
-        if (!file || !title) return NextResponse.json({ error: 'File and Title required' }, { status: 400 })
-
-        // Audio Upload
-        console.log(`Uploading track: ${title}`)
-        const filename = `track-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
-        const { url: filePath } = await put(filename, file, { access: 'public' })
-
-        // Image Upload (Optional)
-        let imagePath = null
-        if (imageFile) {
-            console.log(`Uploading cover image for: ${title}`)
-            const imgFilename = `cover-${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
-            const { url } = await put(imgFilename, imageFile, { access: 'public' })
-            imagePath = url
-        }
+        if (!filePath || !title) return NextResponse.json({ error: 'File path and Title required' }, { status: 400 })
 
         const track = await prisma.track.create({
             data: {
                 title,
                 description,
                 filePath,
-                imagePath,
+                imagePath: imagePath || null,
                 groupId: groupId || null
             }
         })
 
         return NextResponse.json(track)
     } catch (error) {
-        console.error('Upload error:', error)
-        return NextResponse.json({ error: 'Failed to upload track: ' + (error as Error).message }, { status: 500 })
+        console.error('Track creation error:', error)
+        return NextResponse.json({ error: 'Failed to create track: ' + (error as Error).message }, { status: 500 })
     }
 }

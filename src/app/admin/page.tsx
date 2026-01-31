@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { upload } from '@vercel/blob/client'
 
 export default function AdminDashboard() {
     const [activeTab, setActiveTab] = useState('visuals')
@@ -83,22 +84,45 @@ export default function AdminDashboard() {
 
     // --- Handlers ---
     const [uploading, setUploading] = useState(false)
-
-    // --- Handlers ---
+    const [progress, setProgress] = useState(0)
     const handleUploadTrack = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!trackFile || !trackTitle) return
 
         setUploading(true)
+        setProgress(0)
         try {
-            const fd = new FormData()
-            fd.append('file', trackFile)
-            fd.append('title', trackTitle)
-            fd.append('groupId', trackGroup)
-            fd.append('description', trackDesc)
-            if (trackImage) fd.append('imageFile', trackImage)
+            // 1. Upload Audio
+            console.log('Uploading audio...')
+            const newBlob = await upload(trackFile.name, trackFile, {
+                access: 'public',
+                handleUploadUrl: '/api/upload',
+                onUploadProgress: (percentage: number) => setProgress(percentage)
+            })
 
-            const res = await fetch('/api/tracks', { method: 'POST', body: fd })
+            // 2. Upload Image (Optional)
+            let imagePath = null
+            if (trackImage) {
+                console.log('Uploading image...')
+                const imgBlob = await upload(trackImage.name, trackImage, {
+                    access: 'public',
+                    handleUploadUrl: '/api/upload',
+                })
+                imagePath = imgBlob.url
+            }
+
+            // 3. Save to DB
+            const res = await fetch('/api/tracks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: trackTitle,
+                    description: trackDesc,
+                    groupId: trackGroup,
+                    filePath: newBlob.url,
+                    imagePath
+                })
+            })
 
             if (!res.ok) {
                 const data = await res.json()
@@ -117,6 +141,7 @@ export default function AdminDashboard() {
             alert('Error: ' + (error as Error).message)
         } finally {
             setUploading(false)
+            setProgress(0)
         }
     }
 
@@ -172,7 +197,7 @@ export default function AdminDashboard() {
                             <input type="file" onChange={e => setTrackFile(e.target.files?.[0] || null)} style={{ color: 'white' }} accept="audio/*" />
                             <input type="file" onChange={e => setTrackImage(e.target.files?.[0] || null)} style={{ color: 'white' }} accept="image/*" />
                             <button type="submit" style={{ ...btnStyle, opacity: uploading ? 0.5 : 1 }} disabled={uploading}>
-                                {uploading ? 'UPLOADING...' : 'UPLOAD'}
+                                {uploading ? `UPLOADING ${progress}%` : 'UPLOAD'}
                             </button>
                         </form>
                     </div>
