@@ -97,7 +97,7 @@ export default function AdminDashboard() {
             const newBlob = await upload(trackFile.name, trackFile, {
                 access: 'public',
                 handleUploadUrl: '/api/upload',
-                onUploadProgress: (percentage: number) => setProgress(percentage)
+                onUploadProgress: (progress) => setProgress(progress.percentage)
             })
 
             // 2. Upload Image (Optional)
