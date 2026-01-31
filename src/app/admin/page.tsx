@@ -82,11 +82,42 @@ export default function AdminDashboard() {
     }
 
     // --- Handlers ---
+    const [uploading, setUploading] = useState(false)
+
+    // --- Handlers ---
     const handleUploadTrack = async (e: React.FormEvent) => {
-        e.preventDefault(); if (!trackFile || !trackTitle) return
-        const fd = new FormData(); fd.append('file', trackFile); fd.append('title', trackTitle); fd.append('groupId', trackGroup); fd.append('description', trackDesc)
-        if (trackImage) fd.append('imageFile', trackImage)
-        await fetch('/api/tracks', { method: 'POST', body: fd }); setTrackFile(null); setTrackImage(null); setTrackTitle(''); setTrackDesc(''); setTrackGroup(''); fetchData()
+        e.preventDefault()
+        if (!trackFile || !trackTitle) return
+
+        setUploading(true)
+        try {
+            const fd = new FormData()
+            fd.append('file', trackFile)
+            fd.append('title', trackTitle)
+            fd.append('groupId', trackGroup)
+            fd.append('description', trackDesc)
+            if (trackImage) fd.append('imageFile', trackImage)
+
+            const res = await fetch('/api/tracks', { method: 'POST', body: fd })
+
+            if (!res.ok) {
+                const data = await res.json()
+                throw new Error(data.error || 'Upload failed')
+            }
+
+            setTrackFile(null)
+            setTrackImage(null)
+            setTrackTitle('')
+            setTrackDesc('')
+            setTrackGroup('')
+            fetchData() // Refresh list
+            alert('Track uploaded successfully!')
+        } catch (error) {
+            console.error(error)
+            alert('Error: ' + (error as Error).message)
+        } finally {
+            setUploading(false)
+        }
     }
 
     const handleUpdateVisual = async (field: string, value: File | string) => {
@@ -140,7 +171,9 @@ export default function AdminDashboard() {
                             <div style={{ color: 'var(--silver)', fontSize: '0.8rem' }}>AUDIO / COVER:</div>
                             <input type="file" onChange={e => setTrackFile(e.target.files?.[0] || null)} style={{ color: 'white' }} accept="audio/*" />
                             <input type="file" onChange={e => setTrackImage(e.target.files?.[0] || null)} style={{ color: 'white' }} accept="image/*" />
-                            <button type="submit" style={btnStyle}>UPLOAD</button>
+                            <button type="submit" style={{ ...btnStyle, opacity: uploading ? 0.5 : 1 }} disabled={uploading}>
+                                {uploading ? 'UPLOADING...' : 'UPLOAD'}
+                            </button>
                         </form>
                     </div>
                     <div style={{ background: 'var(--panel-bg)', padding: '2rem', border: '1px solid var(--grid-line)' }}>
