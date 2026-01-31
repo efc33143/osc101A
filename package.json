@@ -12,6 +12,9 @@
   "prisma": {
     "seed": "node prisma/seed.js"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "@types/bcryptjs": "^3.0.0",
     "@vercel/blob": "^2.0.1",
