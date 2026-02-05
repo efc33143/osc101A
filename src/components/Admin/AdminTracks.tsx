@@ -8,16 +8,19 @@ import styles from './Admin.module.css'
 interface AdminTracksProps {
     tracks: any[]
     groups: any[]
+    tags: any[]
     refresh: () => void
 }
 
-export default function AdminTracks({ tracks, groups, refresh }: AdminTracksProps) {
+export default function AdminTracks({ tracks, groups, tags, refresh }: AdminTracksProps) {
     // Form State
     const [trackFile, setTrackFile] = useState<File | null>(null)
     const [trackImage, setTrackImage] = useState<File | null>(null)
     const [trackTitle, setTrackTitle] = useState('')
     const [trackGroup, setTrackGroup] = useState('')
     const [trackDesc, setTrackDesc] = useState('')
+    // Use a Set or Array for multiple selection
+    const [selectedTags, setSelectedTags] = useState<string[]>([])
 
     // Upload State
     const [uploading, setUploading] = useState(false)
@@ -27,6 +30,15 @@ export default function AdminTracks({ tracks, groups, refresh }: AdminTracksProp
     const [editingTrack, setEditingTrack] = useState<any>(null)
     const [editTrackImage, setEditTrackImage] = useState<File | null>(null)
     const [removeImage, setRemoveImage] = useState(false)
+
+    // Helper to toggle tags
+    const toggleTag = (tagId: string, currentTags: string[], setFn: (t: string[]) => void) => {
+        if (currentTags.includes(tagId)) {
+            setFn(currentTags.filter(id => id !== tagId))
+        } else {
+            setFn([...currentTags, tagId])
+        }
+    }
 
     const handleUploadTrack = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -63,7 +75,8 @@ export default function AdminTracks({ tracks, groups, refresh }: AdminTracksProp
                     description: trackDesc,
                     groupId: trackGroup,
                     filePath: newBlob.url,
-                    imagePath
+                    imagePath,
+                    tagIds: selectedTags
                 })
             })
 
@@ -74,6 +87,7 @@ export default function AdminTracks({ tracks, groups, refresh }: AdminTracksProp
             setTrackTitle('')
             setTrackDesc('')
             setTrackGroup('')
+            setSelectedTags([])
             refresh()
             alert('TRACK UPLOAD SUCCESSFUL')
         } catch (error) {
@@ -102,6 +116,10 @@ export default function AdminTracks({ tracks, groups, refresh }: AdminTracksProp
         fd.append('groupId', editingTrack.groupId || '')
         if (editTrackImage) fd.append('imageFile', editTrackImage)
         if (removeImage) fd.append('removeImage', 'true')
+
+        // Handle tags
+        const tagIds = editingTrack.tags?.map((t: any) => t.id) || []
+        fd.append('tagIds', JSON.stringify(tagIds))
 
         await fetch(`/api/tracks/${editingTrack.id}`, { method: 'PUT', body: fd })
         setEditingTrack(null)
@@ -137,6 +155,30 @@ export default function AdminTracks({ tracks, groups, refresh }: AdminTracksProp
                         <option value="">SELECT GROUP (OPTIONAL)</option>
                         {groups.map((g: any) => <option key={g.id} value={g.id}>{g.name}</option>)}
                     </select>
+
+                    {/* Tag Selection */}
+                    <div style={{ border: '1px solid #333', padding: '0.5rem' }}>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--silver)', marginBottom: '0.5rem' }}>TAGS:</div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            {tags.map((t: any) => (
+                                <button
+                                    key={t.id}
+                                    type="button"
+                                    onClick={() => toggleTag(t.id, selectedTags, setSelectedTags)}
+                                    style={{
+                                        background: selectedTags.includes(t.id) ? 'var(--gold)' : 'transparent',
+                                        color: selectedTags.includes(t.id) ? 'black' : 'var(--gold)',
+                                        border: '1px solid var(--gold)',
+                                        padding: '0.2rem 0.5rem',
+                                        fontSize: '0.7rem',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    {t.name}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
 
                     <div style={{ color: 'var(--silver)', fontSize: '0.8rem' }}>AUDIO FILE:</div>
                     <input
@@ -224,6 +266,39 @@ export default function AdminTracks({ tracks, groups, refresh }: AdminTracksProp
                                         )}
                                     </div>
 
+                                    {/* Edit Tags */}
+                                    <div style={{ border: '1px solid #333', padding: '0.5rem', marginTop: '1rem' }}>
+                                        <div style={{ fontSize: '0.8rem', color: 'var(--silver)', marginBottom: '0.5rem' }}>TAGS:</div>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                            {tags.map((tag: any) => {
+                                                const isActive = editingTrack.tags?.some((et: any) => et.id === tag.id)
+                                                return (
+                                                    <button
+                                                        key={tag.id}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const currentTags = editingTrack.tags || []
+                                                            const newTags = isActive
+                                                                ? currentTags.filter((ct: any) => ct.id !== tag.id)
+                                                                : [...currentTags, tag]
+                                                            setEditingTrack({ ...editingTrack, tags: newTags })
+                                                        }}
+                                                        style={{
+                                                            background: isActive ? 'var(--gold)' : 'transparent',
+                                                            color: isActive ? 'black' : 'var(--gold)',
+                                                            border: '1px solid var(--gold)',
+                                                            padding: '0.2rem 0.5rem',
+                                                            fontSize: '0.7rem',
+                                                            cursor: 'pointer'
+                                                        }}
+                                                    >
+                                                        {tag.name}
+                                                    </button>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+
                                     <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                                         <button type="submit" className={styles.btn}>SAVE CHANGES</button>
                                         <button onClick={() => { setEditingTrack(null); setRemoveImage(false); setEditTrackImage(null); }} className={styles.btnSecondary}>CANCEL</button>
@@ -236,6 +311,13 @@ export default function AdminTracks({ tracks, groups, refresh }: AdminTracksProp
                                         <div>
                                             <div style={{ fontWeight: 'bold', color: 'white' }}>{t.title}</div>
                                             <div style={{ fontSize: '0.8rem', color: 'var(--silver)' }}>{t.group?.name || 'NO GROUP'}</div>
+                                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.2rem' }}>
+                                                {t.tags?.map((tag: any) => (
+                                                    <span key={tag.id} style={{ fontSize: '0.6rem', border: '1px solid #555', padding: '0 0.3rem', borderRadius: '4px', color: '#aaa' }}>
+                                                        {tag.name}
+                                                    </span>
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
                                     <div style={{ display: 'flex', gap: '0.5rem' }}>

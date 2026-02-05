@@ -39,8 +39,17 @@ model Track {
   groupId     String?
   group       Group?   @relation(fields: [groupId], references: [id])
   
+  tags        Tag[]
+
   comments    Comment[]
 }
+
+model Tag {
+  id      String @id @default(uuid())
+  name    String @unique
+  tracks  Track[]
+}
+
 
 model Comment {
   id        String   @id @default(uuid())

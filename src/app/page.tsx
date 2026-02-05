@@ -7,12 +7,20 @@ import styles from './page.module.css'
 import TrackList from '@/components/TrackList'
 import TrackDetails from '@/components/TrackDetails'
 import Header from '@/components/Header'
+import CommentSection from '@/components/CommentSection'
+import Footer from '@/components/Footer'
+import TagFilter from '@/components/TagFilter'
 
 export default function Home() {
   const [tracks, setTracks] = useState([])
   const [groups, setGroups] = useState([])
+  const [tags, setTags] = useState([])
+
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null)
+  const [selectedTag, setSelectedTag] = useState<string | null>(null)
+
   const [currentTrack, setCurrentTrack] = useState<any>(null)
+  const [queue, setQueue] = useState<any[]>([])
 
   // Visuals state
   const [landingImage, setLandingImage] = useState<string | null>(null)
@@ -26,76 +34,119 @@ export default function Home() {
   const [bannerText, setBannerText] = useState('')
 
   const [loading, setLoading] = useState(true)
+  const [config, setConfig] = useState<any>({})
 
   useEffect(() => {
     const fetchData = async () => {
-      const [tRes, gRes, lRes] = await Promise.all([
+      const [tRes, gRes, lRes, tagRes] = await Promise.all([
         fetch('/api/tracks'),
         fetch('/api/groups'),
-        fetch('/api/config')
+        fetch('/api/config'),
+        fetch('/api/tags')
       ])
       if (tRes.ok) setTracks(await tRes.json())
       if (gRes.ok) setGroups(await gRes.json())
+      if (tagRes.ok) setTags(await tagRes.json())
+
       if (lRes.ok) {
-        const config = await lRes.json()
-        if (config.landingImagePath) setLandingImage(config.landingImagePath)
-        if (config.logoPath) setLogoPath(config.logoPath)
-        if (config.logoScale) setLogoScale(config.logoScale)
-        if (config.parallaxImagePath) setParallaxImage(config.parallaxImagePath)
-        if (config.tagline) setTagline(config.tagline)
-        if (config.bannerText) setBannerText(config.bannerText)
-        if (config.heroHeight) setHeroHeight(config.heroHeight)
-        if (config.heroImagePath) setHeroImage(config.heroImagePath)
+        const conf = await lRes.json()
+        setConfig(conf)
+        if (conf.landingImagePath) setLandingImage(conf.landingImagePath)
+        if (conf.logoPath) setLogoPath(conf.logoPath)
+        if (conf.logoScale) setLogoScale(conf.logoScale)
+        if (conf.parallaxImagePath) setParallaxImage(conf.parallaxImagePath)
+        if (conf.tagline) setTagline(conf.tagline)
+        if (conf.bannerText) setBannerText(conf.bannerText)
+        if (conf.heroHeight) setHeroHeight(conf.heroHeight)
+        if (conf.heroImagePath) setHeroImage(conf.heroImagePath)
       }
       setLoading(false)
     }
     fetchData()
   }, [])
 
-  if (loading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gold)' }}>INITIALIZING...</div>
+  // Filter Logic
+  const filteredTracks = tracks.filter((t: any) => {
+    if (selectedGroup && t.groupId !== selectedGroup) return false
+    if (selectedTag && !t.tags?.some((tag: any) => tag.id === selectedTag)) return false
+    return true
+  })
+
+  // Playback Logic
+  const handlePlayTrack = (track: any) => {
+    setCurrentTrack(track)
+  }
+
+  const handleNextTrack = () => {
+    if (queue.length > 0) {
+      const next = queue[0]
+      setQueue(queue.slice(1))
+      setCurrentTrack(next)
+      return
+    }
+
+    // Default next behavior (next in filtered list)
+    const currentIndex = filteredTracks.findIndex((t: any) => t.id === currentTrack?.id)
+    if (currentIndex >= 0 && currentIndex < filteredTracks.length - 1) {
+      setCurrentTrack(filteredTracks[currentIndex + 1])
+    }
+  }
+
+  const addToQueue = (track: any) => {
+    setQueue([...queue, track])
+    alert('ADDED TO QUEUE')
+  }
+
+  if (loading) return <div className={styles.loading}>LOADING SYSTEM...</div>
 
   return (
-    <main className={styles.main}>
-
-      {/* Background Layer */}
-      <div style={{
-        position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-        backgroundImage: landingImage ? `url(${landingImage})` : 'none',
-        backgroundColor: 'black',
-        backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed',
-        zIndex: 0
-      }} />
-
+    <div className={styles.main}>
       <Header
         logoPath={logoPath}
-        logoScale={logoScale}
-        tagline={tagline}
-        bannerText={bannerText}
-        heroImage={heroImage}
         parallaxImage={parallaxImage}
+        heroImage={heroImage}
         heroHeight={heroHeight}
+        tagline={tagline}
+        logoScale={logoScale}
+        bannerText={bannerText}
       />
 
-      {/* Main Content */}
-      <div className={styles.contentWrapper}>
-        <div className={styles.contentInner}>
-          <GroupSelector groups={groups} selectedGroup={selectedGroup} onSelect={setSelectedGroup} />
+      <div className={styles.content}>
+        {bannerText && <div className={styles.banner}>{bannerText}</div>}
 
-          <div className={styles.gridContainer}>
-            <TrackList
-              tracks={tracks}
-              selectedGroup={selectedGroup}
-              currentTrack={currentTrack}
-              onSelectTrack={setCurrentTrack}
-            />
+        <GroupSelector
+          groups={groups}
+          selectedGroup={selectedGroup}
+          onSelectGroup={setSelectedGroup}
+        />
 
-            <TrackDetails track={currentTrack} />
-          </div>
+        <TagFilter
+          tags={tags}
+          selectedTag={selectedTag}
+          onSelectTag={setSelectedTag}
+        />
+
+        <div className={styles.trackArea}>
+          <TrackList
+            tracks={filteredTracks}
+            onSelectTrack={handlePlayTrack}
+            currentTrack={currentTrack}
+            selectedGroup={selectedGroup}
+          />
+          <TrackDetails
+            track={currentTrack}
+            onAddToQueue={addToQueue}
+          />
         </div>
+
+        <Footer footerText={config?.footerText} socials={config} />
       </div>
 
-      <AudioPlayer track={currentTrack} />
-    </main>
+      <AudioPlayer
+        currentTrack={currentTrack}
+        onNext={handleNextTrack}
+        onPrev={() => { }}
+      />
+    </div>
   )
 }
-

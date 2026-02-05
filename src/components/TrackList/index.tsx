@@ -20,21 +20,19 @@ interface TrackListProps {
 }
 
 export default function TrackList({ tracks, selectedGroup, currentTrack, onSelectTrack }: TrackListProps) {
-    const filteredTracks = selectedGroup
-        ? tracks.filter(t => t.groupId === selectedGroup)
-        : tracks
+    // Tracks are already filtered by parent
 
     return (
         <div className={styles.container}>
             <h2 className={styles.header}>
                 {selectedGroup ? 'GROUP ARCHIVE' : 'ALL TRANSMISSIONS'}
                 <span style={{ fontSize: '0.8rem', color: 'var(--silver)', opacity: 0.5 }}>
-                    {filteredTracks.length} TRACKS
+                    {tracks.length} TRACKS
                 </span>
             </h2>
 
             <ul className={styles.list}>
-                {filteredTracks.map(track => (
+                {tracks.map(track => (
                     <li
                         key={track.id}
                         onClick={() => onSelectTrack(track)}
@@ -50,7 +48,7 @@ export default function TrackList({ tracks, selectedGroup, currentTrack, onSelec
                     </li>
                 ))}
 
-                {filteredTracks.length === 0 && (
+                {tracks.length === 0 && (
                     <p className={styles.emptyState}>NO DATA AVAILABLE</p>
                 )}
             </ul>

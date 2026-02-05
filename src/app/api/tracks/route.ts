@@ -5,7 +5,7 @@ import { put } from '@vercel/blob'
 
 export async function GET() {
     const tracks = await prisma.track.findMany({
-        include: { group: true },
+        include: { group: true, tags: true },
         orderBy: { uploadDate: 'desc' }
     })
     return NextResponse.json(tracks)
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
     try {
         const body = await req.json()
-        const { title, description, groupId, filePath, imagePath } = body
+        const { title, description, groupId, filePath, imagePath, tagIds } = body
 
         if (!filePath || !title) return NextResponse.json({ error: 'File path and Title required' }, { status: 400 })
 
@@ -27,7 +27,8 @@ export async function POST(req: NextRequest) {
                 description,
                 filePath,
                 imagePath: imagePath || null,
-                groupId: groupId || null
+                groupId: groupId || null,
+                tags: tagIds ? { connect: tagIds.map((id: string) => ({ id })) } : undefined
             }
         })
 
