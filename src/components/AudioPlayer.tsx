@@ -10,6 +10,11 @@ export default function AudioPlayer({ track, onNext, onPrev }: any) {
 
     useEffect(() => {
         if (track && audioRef.current) {
+            // With key prop, element is new. We can just set src (already set by prop spread if we did that, but we didn't).
+            // Actually, if we use key, the ref is refilled.
+            // We need to wait for ref to be attached. 
+            // Better to rely on autoPlay attribute being present on the NEW element?
+            // Or use useEffect.
             audioRef.current.src = track.filePath
             audioRef.current.play()
                 .then(() => setIsPlaying(true))
@@ -86,9 +91,14 @@ export default function AudioPlayer({ track, onNext, onPrev }: any) {
 
             <audio
                 ref={audioRef}
+                key={track?.id} // Force re-mount on track change
                 autoPlay
                 onTimeUpdate={handleTimeUpdate}
                 onEnded={() => setIsPlaying(false)}
+                onPlay={() => console.log('Audio Engine: PLAYING')}
+                onPause={() => console.log('Audio Engine: PAUSED')}
+                onError={(e) => console.error('Audio Engine Error:', e.currentTarget.error)}
+                onCanPlay={() => console.log('Audio Engine: READY')}
             />
         </div>
     )

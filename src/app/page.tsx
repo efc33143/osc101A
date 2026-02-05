@@ -139,7 +139,6 @@ export default function Home() {
           </div>
         </div>
 
-        <Footer footerText={config?.footerText} socials={config} />
       </div>
 
       <AudioPlayer
