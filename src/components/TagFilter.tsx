@@ -17,8 +17,10 @@ export default function TagFilter({ tags, selectedTag, onSelectTag }: TagFilterP
             overflowX: 'auto',
             maxWidth: '100%',
             justifyContent: 'center',
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            alignItems: 'center'
         }}>
+            <span style={{ color: 'var(--silver)', fontSize: '0.8rem', marginRight: '0.5rem' }}>TAGS:</span>
             <button
                 onClick={() => onSelectTag(null)}
                 style={{

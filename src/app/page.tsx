@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import GroupSelector from '@/components/GroupSelector'
 import AudioPlayer from '@/components/AudioPlayer'
+import QueueList from '@/components/QueueList'
 import styles from './page.module.css'
 import TrackList from '@/components/TrackList'
 import TrackDetails from '@/components/TrackDetails'
@@ -19,7 +20,8 @@ export default function Home() {
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null)
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
 
-  const [currentTrack, setCurrentTrack] = useState<any>(null)
+  const [currentTrack, setCurrentTrack] = useState<any>(null) // The track currently playing
+  const [selectedTrack, setSelectedTrack] = useState<any>(null) // The track shown in details
   const [queue, setQueue] = useState<any[]>([])
 
   // Visuals state
@@ -73,8 +75,14 @@ export default function Home() {
   })
 
   // Playback Logic
+  const handleViewTrack = (track: any) => {
+    setSelectedTrack(track)
+  }
+
   const handlePlayTrack = (track: any) => {
     setCurrentTrack(track)
+    // Also select it so we see details
+    setSelectedTrack(track)
   }
 
   const handleNextTrack = () => {
@@ -82,19 +90,35 @@ export default function Home() {
       const next = queue[0]
       setQueue(queue.slice(1))
       setCurrentTrack(next)
+      setSelectedTrack(next)
       return
     }
 
     // Default next behavior (next in filtered list)
+    // Find index of current playing track in the filtered list
     const currentIndex = filteredTracks.findIndex((t: any) => t.id === currentTrack?.id)
     if (currentIndex >= 0 && currentIndex < filteredTracks.length - 1) {
-      setCurrentTrack(filteredTracks[currentIndex + 1])
+      const next = filteredTracks[currentIndex + 1]
+      setCurrentTrack(next)
+      setSelectedTrack(next)
     }
+  }
+
+  const handleQueueRemove = (index: number) => {
+    const newQueue = [...queue]
+    newQueue.splice(index, 1)
+    setQueue(newQueue)
+  }
+
+  const handleQueuePlay = (track: any, index: number) => {
+    setCurrentTrack(track)
+    setSelectedTrack(track)
+    handleQueueRemove(index)
   }
 
   const addToQueue = (track: any) => {
     setQueue([...queue, track])
-    alert('ADDED TO QUEUE')
+    // alert('ADDED TO QUEUE') // Removed alert to avoid interruption
   }
 
   if (loading) return <div className={styles.loading}>LOADING SYSTEM...</div>
@@ -128,24 +152,34 @@ export default function Home() {
           <div className={styles.gridContainer}>
             <TrackList
               tracks={filteredTracks}
-              onSelectTrack={handlePlayTrack}
+              onSelectTrack={handleViewTrack}
               currentTrack={currentTrack}
               selectedGroup={selectedGroup}
             />
             <TrackDetails
-              track={currentTrack}
+              track={selectedTrack}
               onAddToQueue={addToQueue}
+              onPlay={handlePlayTrack}
             />
           </div>
         </div>
 
       </div>
 
-      <AudioPlayer
-        track={currentTrack}
-        onNext={handleNextTrack}
-        onPrev={() => { }}
-      />
+      <div style={{ position: 'relative' }}>
+        {/* Queue Overlay, could be toggleable in future but for now always visible if items exist */}
+        <QueueList
+          queue={queue}
+          currentTrack={currentTrack}
+          onRemove={handleQueueRemove}
+          onPlay={handleQueuePlay}
+        />
+        <AudioPlayer
+          track={currentTrack}
+          onNext={handleNextTrack}
+          onPrev={() => { }}
+        />
+      </div>
     </div>
   )
 }

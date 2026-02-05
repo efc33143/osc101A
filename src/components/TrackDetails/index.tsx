@@ -17,9 +17,10 @@ interface Track {
 interface TrackDetailsProps {
     track: Track | null
     onAddToQueue: (track: Track) => void
+    onPlay: (track: Track) => void
 }
 
-export default function TrackDetails({ track, onAddToQueue }: TrackDetailsProps) {
+export default function TrackDetails({ track, onAddToQueue, onPlay }: TrackDetailsProps) {
     if (!track) {
         return (
             <div className={styles.emptyState}>
@@ -61,25 +62,41 @@ export default function TrackDetails({ track, onAddToQueue }: TrackDetailsProps)
 
                     <h1 className={styles.title}>{track.title}</h1>
 
-                    <button
-                        onClick={() => onAddToQueue(track)}
-                        style={{
-                            marginTop: '1rem',
-                            background: 'transparent',
-                            border: '1px solid var(--gold)',
-                            color: 'var(--gold)',
-                            padding: '0.5rem 1rem',
-                            cursor: 'pointer',
-                            fontSize: '0.8rem',
-                            letterSpacing: '1px',
-                            transition: 'all 0.2s',
-                            width: 'fit-content'
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255, 215, 0, 0.1)'}
-                        onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
-                    >
-                        ADD TO QUEUE
-                    </button>
+                    <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                        <button
+                            onClick={() => onPlay(track)}
+                            style={{
+                                background: 'var(--gold)',
+                                border: '1px solid var(--gold)',
+                                color: 'black',
+                                padding: '0.5rem 1rem',
+                                cursor: 'pointer',
+                                fontSize: '0.8rem',
+                                letterSpacing: '1px',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            PLAY TRANSMISSION
+                        </button>
+
+                        <button
+                            onClick={() => onAddToQueue(track)}
+                            style={{
+                                background: 'transparent',
+                                border: '1px solid var(--gold)',
+                                color: 'var(--gold)',
+                                padding: '0.5rem 1rem',
+                                cursor: 'pointer',
+                                fontSize: '0.8rem',
+                                letterSpacing: '1px',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255, 215, 0, 0.1)'}
+                            onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                        >
+                            ADD TO QUEUE
+                        </button>
+                    </div>
                 </div>
             </div>
 
