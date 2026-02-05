@@ -111,32 +111,32 @@ export default function Home() {
         bannerText={bannerText}
       />
 
-      <div className={styles.content}>
-        {bannerText && <div className={styles.banner}>{bannerText}</div>}
-
-        <GroupSelector
-          groups={groups}
-          selectedGroup={selectedGroup}
-          onSelectGroup={setSelectedGroup}
-        />
-
-        <TagFilter
-          tags={tags}
-          selectedTag={selectedTag}
-          onSelectTag={setSelectedTag}
-        />
-
-        <div className={styles.trackArea}>
-          <TrackList
-            tracks={filteredTracks}
-            onSelectTrack={handlePlayTrack}
-            currentTrack={currentTrack}
+      <div className={styles.contentWrapper}>
+        <div className={styles.contentInner}>
+          <GroupSelector
+            groups={groups}
             selectedGroup={selectedGroup}
+            onSelect={setSelectedGroup}
           />
-          <TrackDetails
-            track={currentTrack}
-            onAddToQueue={addToQueue}
+
+          <TagFilter
+            tags={tags}
+            selectedTag={selectedTag}
+            onSelectTag={setSelectedTag}
           />
+
+          <div className={styles.gridContainer}>
+            <TrackList
+              tracks={filteredTracks}
+              onSelectTrack={handlePlayTrack}
+              currentTrack={currentTrack}
+              selectedGroup={selectedGroup}
+            />
+            <TrackDetails
+              track={currentTrack}
+              onAddToQueue={addToQueue}
+            />
+          </div>
         </div>
 
         <Footer footerText={config?.footerText} socials={config} />
