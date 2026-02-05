@@ -76,7 +76,14 @@ export default function Home() {
 
   // Playback Logic
   const handleViewTrack = (track: any) => {
-    setSelectedTrack(track)
+    // Smart Play: If no track is playing, auto-play this selection
+    if (!currentTrack) {
+      setCurrentTrack(track)
+      setSelectedTrack(track)
+    } else {
+      // Otherwise just view it (so user can decide to add to queue or play)
+      setSelectedTrack(track)
+    }
   }
 
   const handlePlayTrack = (track: any) => {
@@ -90,6 +97,11 @@ export default function Home() {
       const next = queue[0]
       setQueue(queue.slice(1))
       setCurrentTrack(next)
+      // Only change selection if we are viewing the track that just finished? 
+      // Actually usually better to just play in background.
+      // But user might want to see what's playing. 
+      // Let's safe bet: Update selection to what's playing if user hasn't explicitly navigated away?
+      // For now simple: Update selection to match playing track is clearer.
       setSelectedTrack(next)
       return
     }
