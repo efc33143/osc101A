@@ -76,6 +76,7 @@ export default function AudioPlayer({ track, onNext, onPrev }: any) {
                         {isPlaying ? 'PAUSE' : 'PLAY'}
                     </button>
                     <button onClick={() => skip(10)} style={btnStyle}>10s »</button>
+                    <button onClick={onNext} style={{ ...btnStyle, borderLeft: '1px solid var(--gold)', marginLeft: '0.5rem' }}>NEXT »|</button>
                 </div>
             </div>
 
@@ -94,7 +95,7 @@ export default function AudioPlayer({ track, onNext, onPrev }: any) {
                 key={track?.id} // Force re-mount on track change
                 autoPlay
                 onTimeUpdate={handleTimeUpdate}
-                onEnded={() => setIsPlaying(false)}
+                onEnded={onNext}
                 onPlay={() => console.log('Audio Engine: PLAYING')}
                 onPause={() => console.log('Audio Engine: PAUSED')}
                 onError={(e) => console.error('Audio Engine Error:', e.currentTarget.error)}
