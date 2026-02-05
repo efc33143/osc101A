@@ -142,7 +142,7 @@ export default function Home() {
       </div>
 
       <AudioPlayer
-        currentTrack={currentTrack}
+        track={currentTrack}
         onNext={handleNextTrack}
         onPrev={() => { }}
       />
