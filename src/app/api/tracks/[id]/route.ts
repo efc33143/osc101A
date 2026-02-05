@@ -74,12 +74,19 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
                 }
             }
 
+            const tagIds = formData.get('tagIds') as string
+            if (tagIds) {
+                const ids = JSON.parse(tagIds)
+                updateData.tags = { set: ids.map((id: string) => ({ id })) }
+            }
+
         } else {
             const data = await req.json()
             updateData = {
                 title: data.title,
                 description: data.description,
-                groupId: data.groupId || null
+                groupId: data.groupId || null,
+                tags: data.tagIds ? { set: data.tagIds.map((id: string) => ({ id })) } : undefined
             }
         }
 

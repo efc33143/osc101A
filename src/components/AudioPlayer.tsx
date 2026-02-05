@@ -11,7 +11,12 @@ export default function AudioPlayer({ track, onNext, onPrev }: any) {
     useEffect(() => {
         if (track && audioRef.current) {
             audioRef.current.src = track.filePath
-            audioRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false))
+            audioRef.current.play()
+                .then(() => setIsPlaying(true))
+                .catch((e) => {
+                    console.error("Playback failed:", e);
+                    setIsPlaying(false);
+                })
         }
     }, [track])
 
