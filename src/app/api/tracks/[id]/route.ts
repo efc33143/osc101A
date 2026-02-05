@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import { getSession } from '@/lib/auth'
-import { writeFile, unlink } from 'fs/promises'
-import { join } from 'path'
+import { put, del } from '@vercel/blob'
+
+// Helper to delete from blob if it's a blob url
+async function deleteAsset(url: string | null) {
+    if (!url) return
+    if (url.includes('blob.vercel-storage.com')) {
+        try {
+            await del(url)
+        } catch (e) {
+            console.error('Blob delete failed', e)
+        }
+    }
+}
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const session = await getSession()
@@ -13,18 +24,11 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     try {
         const track = await prisma.track.findUnique({ where: { id } })
         if (track) {
-            try {
-                // Delete audio
-                const filePath = join(process.cwd(), 'public', track.filePath)
-                await unlink(filePath)
-                // Delete image if exists
-                if (track.imagePath) {
-                    const imgPath = join(process.cwd(), 'public', track.imagePath)
-                    await unlink(imgPath)
-                }
-            } catch (e) {
-                console.error('Failed to delete file', e)
-            }
+            // Delete visuals/audio from blob
+            await Promise.all([
+                deleteAsset(track.filePath),
+                deleteAsset(track.imagePath)
+            ])
             await prisma.track.delete({ where: { id } })
         }
         return NextResponse.json({ success: true })
@@ -40,31 +44,36 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const { id } = await params;
 
     try {
-        // Parse FormData potentially (or JSON fallback, but frontend uses FormData for files)
         const contentType = req.headers.get('content-type') || ''
-
         let updateData: any = {}
 
         if (contentType.includes('multipart/form-data')) {
             const formData = await req.formData()
             updateData.title = formData.get('title') as string
             updateData.description = formData.get('description') as string
+
             const groupId = formData.get('groupId') as string
-            updateData.groupId = groupId || null
+            updateData.groupId = groupId && groupId !== '' ? groupId : null
 
+            const removeImage = formData.get('removeImage') === 'true'
             const imageFile = formData.get('imageFile') as File | null
-            if (imageFile) {
-                const bytes = await imageFile.arrayBuffer()
-                const buffer = Buffer.from(bytes)
-                const filename = `cover-${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
-                const uploadDir = join(process.cwd(), 'public', 'uploads')
 
-                const fs = require('fs')
-                if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true })
+            // Handle Image Updates
+            if (removeImage || imageFile) {
+                // Fetch old track to delete old image
+                const oldTrack = await prisma.track.findUnique({ where: { id }, select: { imagePath: true } })
+                if (oldTrack?.imagePath) await deleteAsset(oldTrack.imagePath)
 
-                await writeFile(join(uploadDir, filename), buffer)
-                updateData.imagePath = `/uploads/${filename}`
+                if (removeImage) {
+                    updateData.imagePath = null
+                }
+
+                if (imageFile) {
+                    const blob = await put(imageFile.name, imageFile, { access: 'public' })
+                    updateData.imagePath = blob.url
+                }
             }
+
         } else {
             const data = await req.json()
             updateData = {

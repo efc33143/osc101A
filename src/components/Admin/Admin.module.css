@@ -1,0 +1,232 @@
+.dashboard {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    color: var(--silver);
+    font-family: var(--font-body);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 1rem;
+    align-items: center;
+}
+
+.title {
+    color: var(--gold);
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    letter-spacing: 2px;
+}
+
+.exitBtn {
+    background: transparent;
+    color: var(--silver);
+    border: 1px solid var(--silver);
+    padding: 0.5rem 1rem;
+    font-family: var(--font-heading);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.exitBtn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.2);
+}
+
+.nav {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.navBtn {
+    padding: 1rem 2rem;
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--grid-line);
+    cursor: pointer;
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.navBtnActive {
+    composes: navBtn;
+    background: var(--gold);
+    color: black;
+    border-color: var(--gold);
+    box-shadow: 0 0 15px rgba(255, 51, 51, 0.3);
+}
+
+.navBtn:hover:not(.navBtnActive) {
+    border-color: var(--gold);
+    background: rgba(255, 51, 51, 0.1);
+}
+
+/* Panel Styles */
+.panel {
+    background: var(--panel-bg);
+    padding: 2rem;
+    border: 1px solid var(--grid-line);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+}
+
+.panelTitle {
+    color: var(--gold);
+    font-family: var(--font-heading);
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 0.5rem;
+}
+
+/* Form Elements */
+.input,
+.select,
+.textarea {
+    width: 100%;
+    padding: 0.8rem;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--grid-line);
+    color: white;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: black;
+}
+
+.btn {
+    padding: 1rem 2rem;
+    background: var(--gold);
+    color: black;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.btn:hover {
+    box-shadow: 0 0 15px rgba(255, 51, 51, 0.4);
+    filter: brightness(1.1);
+}
+
+.btnSecondary {
+    composes: btn;
+    background: transparent;
+    border: 1px solid var(--silver);
+    color: var(--silver);
+}
+
+.btnSecondary:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(255, 51, 51, 0.1);
+}
+
+.btnDanger {
+    composes: btn;
+    background: transparent;
+    border: 1px solid #ff4444;
+    color: #ff4444;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+}
+
+.btnDanger:hover {
+    background: rgba(255, 68, 68, 0.1);
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+}
+
+/* List/Table Styles */
+.list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.listItem {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--grid-line);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.listItem:hover {
+    border-color: #444;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+}
+
+.th {
+    text-align: left;
+    padding: 1rem;
+    border-bottom: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--font-heading);
+}
+
+.td {
+    padding: 1rem;
+    border-bottom: 1px solid #333;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: minmax(350px, 1fr) 2fr;
+    gap: 2rem;
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    background: black;
+    border: 1px solid var(--gold);
+    padding: 2rem;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 0 30px rgba(255, 51, 51, 0.3);
+}
