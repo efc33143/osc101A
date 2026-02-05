@@ -86,6 +86,7 @@ export default function AudioPlayer({ track, onNext, onPrev }: any) {
 
             <audio
                 ref={audioRef}
+                autoPlay
                 onTimeUpdate={handleTimeUpdate}
                 onEnded={() => setIsPlaying(false)}
             />
