@@ -57,6 +57,12 @@
   }
 }
 
+@media (max-width: 768px) {
+  .contentWrapper {
+    padding: 0 1rem;
+  }
+}
+
 .tagline {
   letter-spacing: 8px;
   color: var(--silver);

@@ -61,10 +61,31 @@
 
 .logo {
     width: auto;
+    max-width: 100%;
     display: block;
     margin: 0 auto;
     filter: drop-shadow(0 0 20px rgba(255, 51, 51, 0.3));
     transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .content {
+        padding: 0 1rem;
+    }
+
+    .fallbackTitle {
+        font-size: 3rem;
+    }
+
+    .tagline {
+        font-size: 1rem;
+        letter-spacing: 4px;
+    }
+
+    .banner {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
 }
 
 .logo:hover {
@@ -117,21 +138,5 @@
 
     100% {
         box-shadow: 0 0 20px rgba(255, 51, 51, 0.1);
-    }
-}
-
-@media (max-width: 768px) {
-    .fallbackTitle {
-        font-size: 3rem;
-    }
-
-    .tagline {
-        font-size: 1rem;
-        letter-spacing: 4px;
-    }
-
-    .banner {
-        font-size: 1rem;
-        padding: 0.8rem 1.5rem;
     }
 }
