@@ -92,7 +92,7 @@ export default function AdminTracks({ tracks, groups, tags, refresh }: AdminTrac
             alert('TRACK UPLOAD SUCCESSFUL')
         } catch (error) {
             console.error(error)
-            alert('UPLOAD FAILED')
+            alert('UPLOAD FAILED: ' + (error as Error).message)
         } finally {
             setUploading(false)
             setProgress(0)
