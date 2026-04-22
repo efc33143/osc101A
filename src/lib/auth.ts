@@ -16,6 +16,7 @@ export async function verifySession(token: string) {
     try {
         const { payload } = await jwtVerify(token, key, {
             algorithms: ['HS256'],
+            clockTolerance: '1 min',
         })
         return payload
     } catch (error) {
