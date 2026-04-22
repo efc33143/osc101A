@@ -6,18 +6,15 @@ export async function POST(request: Request): Promise<NextResponse> {
     const body = (await request.json()) as HandleUploadBody;
 
     try {
-        const session = await getSession();
-        if (!session) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
         const jsonResponse = await handleUpload({
             body,
             request,
             onBeforeGenerateToken: async (pathname, clientPayload) => {
                 // Generate a client token for the browser to upload the file
-                // ⚠️ Authenticate and authorize users before generating the token.
-                // Otherwise, anyone can upload files to your project.
+                const session = await getSession();
+                if (!session) {
+                    throw new Error('Unauthorized');
+                }
 
                 return {
                     allowedContentTypes: ['audio/mpeg', 'audio/mp3', 'audio/wav', 'image/jpeg', 'image/png', 'image/webp'],
