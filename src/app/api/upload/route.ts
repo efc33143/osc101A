@@ -28,6 +28,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
                 return {
                     maximumSizeInBytes: 104857600, // 100 MB
+                    addRandomSuffix: true,
                     tokenPayload: JSON.stringify({
                         userId: session.id,
                     }),
