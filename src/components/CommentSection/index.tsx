@@ -60,7 +60,7 @@ export default function CommentSection({ trackId }: { trackId: string }) {
 
     return (
         <div className={styles.container}>
-            <h3 className={styles.heading}>SECURE TRANSMISSIONS</h3>
+            <h3 className={styles.heading}>SPEAK YOUR MIND</h3>
 
             <form onSubmit={handleSubmit} className={styles.form}>
                 <textarea

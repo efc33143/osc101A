@@ -320,7 +320,8 @@ export default function AdminTracks({ tracks, groups, tags, refresh }: AdminTrac
                                             </div>
                                         </div>
                                     </div>
-                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                        <span style={{ fontSize: '0.7rem', color: 'var(--gold)', marginRight: '0.5rem', fontWeight: 'bold' }}>PLAYS: {t.playCount || 0}</span>
                                         <button onClick={() => setEditingTrack(t)} className={styles.btnSecondary} style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}>EDIT</button>
                                         <button onClick={() => handleDeleteTrack(t.id)} className={styles.btnDanger}>DEL</button>
                                     </div>

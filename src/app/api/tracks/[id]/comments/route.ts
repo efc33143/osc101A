@@ -14,14 +14,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json(comments)
 }
 
+import { sanitize } from '@/lib/sanitize'
+
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
     try {
         const { content } = await req.json()
 
-        // Basic sanitization
-        const sanitized = content.replace(/<[^>]*>?/gm, "")
-        if (!sanitized.trim()) return NextResponse.json({ error: 'Empty comment' }, { status: 400 })
+        // Robust sanitization against XSS, cross-linking, and binary embedding
+        const sanitized = sanitize(content)
+        if (!sanitized) return NextResponse.json({ error: 'Empty comment' }, { status: 400 })
 
         const comment = await prisma.comment.create({
             data: {

@@ -5,13 +5,13 @@
   --foreground: #e0e0e0;
   
   /* Primary Accents */
-  --gold: #ff3333; /* Bright tech red */
+  --gold: #ff0100; /* Blood red */
   --dark-gold: #660000; /* Deep crimson */
   --silver: #f0f0f0; /* Off-white for text */
   
   /* Glass Theme */
   --glass-bg: rgba(20, 20, 20, 0.7);
-  --glass-border: rgba(255, 50, 50, 0.2);
+  --glass-border: rgba(255, 1, 0, 0.2);
   --glass-shine: rgba(255, 255, 255, 0.05);
   
   /* Structural */
@@ -84,7 +84,7 @@ a:hover {
 }
 
 .text-glow {
-  text-shadow: 0 0 10px rgba(255, 50, 50, 0.5);
+  text-shadow: 0 0 10px rgba(255, 1, 0, 0.5);
 }
 
 /* Animations */

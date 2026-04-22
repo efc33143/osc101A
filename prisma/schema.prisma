@@ -42,6 +42,8 @@ model Track {
   tags        Tag[]
 
   comments    Comment[]
+
+  playCount   Int      @default(0)
 }
 
 model Tag {

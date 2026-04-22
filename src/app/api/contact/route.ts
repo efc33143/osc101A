@@ -12,13 +12,18 @@ export async function GET() {
     return NextResponse.json(messages)
 }
 
+import { sanitize } from '@/lib/sanitize'
+
 export async function POST(req: NextRequest) {
     try {
         const { email, message } = await req.json()
         if (!email || !message) return NextResponse.json({ error: 'Email and Message required' }, { status: 400 })
 
+        const sanitizedMessage = sanitize(message)
+        if (!sanitizedMessage) return NextResponse.json({ error: 'Invalid message' }, { status: 400 })
+
         const newMsg = await prisma.contactMessage.create({
-            data: { email, message }
+            data: { email, message: sanitizedMessage }
         })
         return NextResponse.json(newMsg)
     } catch (error) {
