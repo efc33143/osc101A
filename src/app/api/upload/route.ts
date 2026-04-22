@@ -27,6 +27,7 @@ export async function POST(request: Request): Promise<NextResponse> {
                 console.log('Session validated for user ID:', session.id);
 
                 return {
+                    maximumSizeInBytes: 104857600, // 100 MB
                     tokenPayload: JSON.stringify({
                         userId: session.id,
                     }),
