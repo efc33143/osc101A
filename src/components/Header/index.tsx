@@ -75,13 +75,21 @@ export default function Header({
             )}
 
             <div className={styles.overlay} />
+            <div className={styles.bottomFade} />
+
+            {bannerText && (
+                <div className={styles.floatingBanner}>
+                    <span className={styles.bannerIcon}>✦</span>
+                    <span className={styles.bannerTextContent}>{bannerText}</span>
+                </div>
+            )}
 
             <Link
                 href="/about"
                 className={styles.content}
                 style={{ transform: `translateY(${scrollY * 0.2}px)` }}
             >
-                <div className={styles.logoContainer}>
+                <div className={styles.brandGroup}>
                     {logoPath ? (
                         <img
                             src={logoPath}
@@ -92,16 +100,7 @@ export default function Header({
                     ) : (
                         <h1 className={styles.fallbackTitle}>ALIVE 2026</h1>
                     )}
-                </div>
-
-                <div className={styles.textContainer}>
                     <p className={styles.tagline}>{tagline}</p>
-
-                    {bannerText && (
-                        <div className={styles.banner}>
-                            {bannerText}
-                        </div>
-                    )}
                 </div>
             </Link>
         </section>

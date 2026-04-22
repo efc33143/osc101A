@@ -17,8 +17,19 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 90%);
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.8) 100%);
     z-index: 1;
+}
+
+.bottomFade {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+    z-index: 2;
+    pointer-events: none;
 }
 
 .blurLayer {
@@ -58,26 +69,20 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    justify-content: center;
 }
 
-.logoContainer {
-    flex: 1;
+.brandGroup {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
     width: 100%;
-    min-height: 0; /* allows flex item to shrink below content size if needed */
-    padding-top: 2rem;
-}
-
-.textContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    padding-bottom: 4rem;
+    flex: 1;
+    min-height: 0;
+    padding: 2rem;
+    background: radial-gradient(circle, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 70%);
 }
 
 .logo {
@@ -89,39 +94,7 @@
     transition: filter 0.3s ease, transform 0.3s ease;
 }
 
-@media (max-width: 768px) {
-    .hero {
-        min-height: 85vh !important;
-    }
 
-    .content {
-        padding: 0 1rem;
-        gap: 1rem;
-    }
-
-    .logoContainer {
-        padding-top: 1rem;
-    }
-
-    .textContainer {
-        padding-bottom: 2rem;
-    }
-
-    .fallbackTitle {
-        font-size: 3rem;
-    }
-
-    .tagline {
-        font-size: 1rem;
-        letter-spacing: 4px;
-    }
-
-    .banner {
-        margin-top: 1.5rem;
-        font-size: 1rem;
-        padding: 0.8rem 1.5rem;
-    }
-}
 
 .logo:hover {
     filter: drop-shadow(0 0 30px rgba(255, 51, 51, 0.6));
@@ -139,39 +112,99 @@
 
 .tagline {
     color: var(--silver);
-    font-size: 1.5rem;
-    letter-spacing: 8px;
+    font-size: 0.9rem;
+    letter-spacing: 16px;
     margin: 0;
+    opacity: 0.8;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     font-family: var(--font-heading);
     text-transform: uppercase;
 }
 
-.banner {
-    margin-top: 2rem;
-    background: rgba(20, 20, 20, 0.8);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--gold);
-    padding: 1rem 3rem;
-    color: var(--gold);
-    font-family: var(--font-heading);
-    letter-spacing: 2px;
-    font-size: 1.2rem;
-    border-radius: 4px;
-    box-shadow: 0 0 20px rgba(255, 51, 51, 0.1);
-    animation: pulse 3s infinite;
+.floatingBanner {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    z-index: 20;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    box-shadow: 0 0 20px rgba(255, 1, 0, 0.2), inset 0 0 10px rgba(255, 1, 0, 0.1);
+    animation: slideInRight 0.5s ease-out forwards;
 }
 
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 20px rgba(255, 51, 51, 0.1);
+.bannerIcon {
+    color: var(--gold);
+    font-size: 1.2rem;
+}
+
+.bannerTextContent {
+    color: var(--silver);
+    font-family: var(--font-heading);
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        min-height: 85vh !important;
     }
 
-    50% {
-        box-shadow: 0 0 30px rgba(255, 51, 51, 0.3);
+    .content {
+        padding: 0 1rem;
+        padding-bottom: 8rem;
     }
 
-    100% {
-        box-shadow: 0 0 20px rgba(255, 51, 51, 0.1);
+    .brandGroup {
+        padding: 1rem;
+    }
+
+    .fallbackTitle {
+        font-size: 3rem;
+    }
+
+    .tagline {
+        font-size: 0.75rem;
+        letter-spacing: 8px;
+    }
+
+    .floatingBanner {
+        top: unset;
+        bottom: 2rem;
+        left: 1rem;
+        right: 1rem;
+        justify-content: center;
+        border-left: 1px solid var(--glass-border);
+        border-bottom: 3px solid var(--gold);
+        animation: slideInUp 0.5s ease-out forwards;
     }
 }
