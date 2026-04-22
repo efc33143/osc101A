@@ -27,7 +27,6 @@ export async function POST(request: Request): Promise<NextResponse> {
                 console.log('Session validated for user ID:', session.id);
 
                 return {
-                    allowedContentTypes: ['audio/mpeg', 'audio/mp3', 'audio/wav', 'image/jpeg', 'image/png', 'image/webp'],
                     tokenPayload: JSON.stringify({
                         userId: session.id,
                     }),
