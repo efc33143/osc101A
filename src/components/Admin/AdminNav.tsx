@@ -8,7 +8,7 @@ interface AdminNavProps {
 }
 
 export default function AdminNav({ activeTab, setActiveTab }: AdminNavProps) {
-    const tabs = ['tracks', 'groups', 'tags', 'visuals', 'about', 'comments', 'messages']
+    const tabs = ['tracks', 'groups', 'tags', 'visuals', 'about', 'comments', 'messages', 'settings']
 
     return (
         <div className={styles.nav}>

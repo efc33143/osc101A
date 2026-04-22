@@ -11,6 +11,7 @@ import AdminGroups from '@/components/Admin/AdminGroups'
 import AdminVisuals from '@/components/Admin/AdminVisuals'
 import AdminContent from '@/components/Admin/AdminContent'
 import AdminTags from '@/components/Admin/AdminTags'
+import AdminSettings from '@/components/Admin/AdminSettings'
 
 export default function AdminDashboard() {
     const [activeTab, setActiveTab] = useState('tracks')
@@ -80,6 +81,10 @@ export default function AdminDashboard() {
 
             {activeTab === 'messages' && (
                 <AdminContent type="messages" items={messages} refresh={fetchData} />
+            )}
+
+            {activeTab === 'settings' && (
+                <AdminSettings />
             )}
         </div>
     )
