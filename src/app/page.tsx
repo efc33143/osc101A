@@ -30,6 +30,7 @@ export default function Home() {
   const [parallaxImage, setParallaxImage] = useState<string | null>('/images/earth_moon.png')
   const [heroImage, setHeroImage] = useState<string | null>(null)
   const [heroHeight, setHeroHeight] = useState('90vh')
+  const [heroBlur, setHeroBlur] = useState(7)
   const [logoScale, setLogoScale] = useState(100)
 
   const [tagline, setTagline] = useState('HUMAN AFTER ALL')
@@ -60,6 +61,7 @@ export default function Home() {
         if (conf.tagline) setTagline(conf.tagline)
         if (conf.bannerText) setBannerText(conf.bannerText)
         if (conf.heroHeight) setHeroHeight(conf.heroHeight)
+        if (conf.heroBlur !== undefined && conf.heroBlur !== null) setHeroBlur(conf.heroBlur)
         if (conf.heroImagePath) setHeroImage(conf.heroImagePath)
       }
       setLoading(false)
@@ -142,6 +144,7 @@ export default function Home() {
         parallaxImage={parallaxImage}
         heroImage={heroImage}
         heroHeight={heroHeight}
+        heroBlur={heroBlur}
         tagline={tagline}
         logoScale={logoScale}
         bannerText={bannerText}

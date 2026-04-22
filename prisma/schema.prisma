@@ -78,6 +78,7 @@ model SiteConfig {
   aboutImage3Path  String?
   heroHeight       String?
   heroImagePath    String?
+  heroBlur         Int?    @default(7)
   
   footerText       String?
   instagramUrl     String?

@@ -21,6 +21,7 @@ export default function AdminVisuals({ config, refresh }: AdminVisualsProps) {
     const [bannerText, setBannerText] = useState(config.bannerText || '')
     const [heroHeight, setHeroHeight] = useState(config.heroHeight || '')
     const [logoScale, setLogoScale] = useState(config.logoScale || 100)
+    const [heroBlur, setHeroBlur] = useState(config.heroBlur ?? 7)
 
     // File State
     const [heroFile, setHeroFile] = useState<File | null>(null)
@@ -142,6 +143,17 @@ export default function AdminVisuals({ config, refresh }: AdminVisualsProps) {
                         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
                             <input value={heroHeight} onChange={e => setHeroHeight(e.target.value)} className={styles.input} />
                             <button onClick={() => handleUpdate('heroHeight', heroHeight)} className={styles.btnSecondary}>UPD</button>
+                        </div>
+
+                        <label style={{ fontSize: '0.8rem' }}>HERO BLUR: {heroBlur}</label>
+                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', alignItems: 'center' }}>
+                            <input 
+                                type="range" min="0" max="10" 
+                                value={heroBlur} 
+                                onChange={e => setHeroBlur(parseInt(e.target.value))} 
+                                style={{ flex: 1, accentColor: 'var(--gold)' }} 
+                            />
+                            <button onClick={() => handleUpdate('heroBlur', heroBlur.toString())} className={styles.btnSecondary}>UPD</button>
                         </div>
 
                         <label style={{ fontSize: '0.8rem' }}>TAGLINE</label>

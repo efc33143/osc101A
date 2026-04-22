@@ -59,6 +59,8 @@ export async function POST(req: NextRequest) {
         if (heroHeight !== null) updateData.heroHeight = heroHeight
         const logoScale = formData.get('logoScale')
         if (logoScale) updateData.logoScale = parseInt(logoScale.toString(), 10)
+        const heroBlur = formData.get('heroBlur')
+        if (heroBlur) updateData.heroBlur = parseInt(heroBlur.toString(), 10)
 
         if (footerText !== null) updateData.footerText = footerText
         if (instagramUrl !== null) updateData.instagramUrl = instagramUrl
