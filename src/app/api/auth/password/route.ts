@@ -21,7 +21,7 @@ export async function PUT(req: NextRequest) {
         }
 
         const user = await prisma.user.findUnique({
-            where: { id: session.id },
+            where: { id: session.id as string },
         })
 
         if (!user) {
