@@ -70,6 +70,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding-bottom: 10vh;
 }
 
 .brandGroup {
@@ -82,7 +83,7 @@
     flex: 1;
     min-height: 0;
     padding: 2rem;
-    background: radial-gradient(circle, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 70%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 80%);
 }
 
 .logo {
@@ -146,6 +147,27 @@
     background: rgba(255, 1, 0, 0.1);
     transform: scale(1.02);
     box-shadow: 0 0 30px rgba(255, 1, 0, 0.4), inset 0 0 20px rgba(255, 1, 0, 0.2);
+}
+
+.ghostNav {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    z-index: 20;
+    color: var(--silver);
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    letter-spacing: 16px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+.ghostNav:hover {
+    color: var(--gold);
+    opacity: 1;
+    text-shadow: 0 0 15px rgba(255, 1, 0, 0.8);
 }
 
 .bannerIcon {

@@ -24,9 +24,11 @@ export default function TagFilter({ tags, selectedTag, onSelectTag }: TagFilterP
             <button
                 onClick={() => onSelectTag(null)}
                 style={{
-                    background: !selectedTag ? 'var(--gold)' : 'rgba(0,0,0,0.5)',
-                    color: !selectedTag ? 'black' : 'var(--gold)',
-                    border: '1px solid var(--gold)',
+                    background: 'transparent',
+                    color: !selectedTag ? 'var(--gold)' : 'var(--silver)',
+                    opacity: !selectedTag ? 1 : 0.5,
+                    textShadow: !selectedTag ? '0 0 10px rgba(255, 215, 0, 0.5)' : 'none',
+                    border: 'none',
                     padding: '0.3rem 0.8rem',
                     borderRadius: '4px',
                     cursor: 'pointer',
@@ -43,9 +45,11 @@ export default function TagFilter({ tags, selectedTag, onSelectTag }: TagFilterP
                     key={tag.id}
                     onClick={() => onSelectTag(selectedTag === tag.id ? null : tag.id)}
                     style={{
-                        background: selectedTag === tag.id ? 'var(--gold)' : 'rgba(0,0,0,0.5)',
-                        color: selectedTag === tag.id ? 'black' : 'var(--gold)',
-                        border: '1px solid var(--gold)',
+                        background: 'transparent',
+                        color: selectedTag === tag.id ? 'var(--gold)' : 'var(--silver)',
+                        opacity: selectedTag === tag.id ? 1 : 0.5,
+                        textShadow: selectedTag === tag.id ? '0 0 10px rgba(255, 215, 0, 0.5)' : 'none',
+                        border: 'none',
                         padding: '0.3rem 0.8rem',
                         borderRadius: '4px',
                         cursor: 'pointer',

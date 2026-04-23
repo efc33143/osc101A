@@ -35,7 +35,12 @@ export default function Header({
     }, [])
 
     return (
-        <section className={styles.hero} style={{ height: heroHeight }}>
+        <header className={styles.hero} style={{ height: heroHeight }}>
+            {/* Top-Left Ghost Nav for Cassetto */}
+            <Link href="/cassetto" className={styles.ghostNav}>
+                PROJECT: CASSETTO
+            </Link>
+
             {heroImage ? (
                 <img
                     src={heroImage}
@@ -103,6 +108,6 @@ export default function Header({
                     <p className={styles.tagline}>{tagline}</p>
                 </div>
             </Link>
-        </section>
+        </header>
     )
 }

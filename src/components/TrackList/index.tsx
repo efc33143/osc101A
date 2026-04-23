@@ -43,7 +43,7 @@ export default function TrackList({ tracks, selectedGroup, currentTrack, onSelec
                 </span>
             </h2>
 
-            <ul className={styles.list}>
+            <ul className={styles.list} key={`${selectedGroup}-${tracks.length}`}>
                 {tracks.map(track => {
                     const isPlaying = currentTrack?.id === track.id
                     // Only highlight playing if we are actually playing (not just selected)

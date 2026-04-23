@@ -1,0 +1,258 @@
+.container {
+    min-height: 100vh;
+    background: black;
+    color: var(--silver);
+    font-family: var(--font-body);
+}
+
+.content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+}
+
+.backLink {
+    display: inline-block;
+    color: var(--gold);
+    font-family: var(--font-heading);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-decoration: none;
+    margin-bottom: 4rem;
+    transition: opacity 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.backLink:hover {
+    opacity: 0.7;
+}
+
+.intro {
+    text-align: center;
+    margin-bottom: 6rem;
+}
+
+.title {
+    font-family: var(--font-heading);
+    color: var(--gold);
+    font-size: 3rem;
+    letter-spacing: 8px;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: var(--silver);
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.section {
+    margin-bottom: 6rem;
+}
+
+.sectionTitle {
+    font-family: var(--font-heading);
+    color: var(--gold);
+    font-size: 2rem;
+    letter-spacing: 4px;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--grid-line);
+    padding-bottom: 1rem;
+}
+
+/* Feature Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid var(--grid-line);
+    padding: 2rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    border-color: var(--gold);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(255, 1, 0, 0.1);
+}
+
+.cardTitle {
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.cardText {
+    color: var(--silver);
+    line-height: 1.6;
+}
+
+/* Flow Image Container */
+.imageContainer {
+    width: 100%;
+    margin: 4rem 0;
+    border: 1px solid var(--grid-line);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    background: #000;
+}
+
+.imageContainer img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Preview Card */
+.previewGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 3rem;
+    margin-top: 2rem;
+}
+
+.previewCard {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid var(--grid-line);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.previewCard:hover {
+    border-color: var(--gold);
+    box-shadow: 0 5px 20px rgba(255, 1, 0, 0.1);
+    transform: translateY(-5px);
+}
+
+.previewImage {
+    width: 100%;
+    height: 450px;
+    background: #0a0a0a;
+    border-bottom: 1px solid var(--grid-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+.previewImage img {
+    width: 33%;
+    min-width: 150px;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.previewContent {
+    padding: 2rem;
+    flex-grow: 1;
+}
+
+.previewTitle {
+    color: var(--gold);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.previewText {
+    color: var(--silver);
+    line-height: 1.6;
+}
+
+/* Table Style */
+.comparisonTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+    background: rgba(20, 20, 20, 0.8);
+    font-size: 0.95rem;
+}
+
+.comparisonTable th,
+.comparisonTable td {
+    padding: 1rem;
+    border: 1px solid var(--grid-line);
+    text-align: left;
+}
+
+.comparisonTable th {
+    font-family: var(--font-heading);
+    color: var(--gold);
+    letter-spacing: 2px;
+}
+
+.comparisonTable td {
+    color: var(--silver);
+    line-height: 1.5;
+}
+
+.highlightCell {
+    background: rgba(255, 1, 0, 0.05);
+    color: white !important;
+}
+
+/* CTA */
+.ctaContainer {
+    text-align: center;
+    margin-top: 8rem;
+    padding: 4rem;
+    background: rgba(20, 20, 20, 0.5);
+    border: 1px solid var(--grid-line);
+    border-radius: 8px;
+}
+
+.ctaTitle {
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.ctaButton {
+    display: inline-block;
+    background: var(--gold);
+    color: black;
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 20px rgba(255, 1, 0, 0.2);
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.ctaButton:hover {
+    background: transparent;
+    color: var(--gold);
+    box-shadow: 0 0 30px rgba(255, 1, 0, 0.4);
+}
+
+@media (max-width: 768px) {
+    .comparisonTable {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .ctaContainer {
+        padding: 2rem 1rem;
+    }
+}
