@@ -75,6 +75,10 @@ export default function AdminDashboard() {
                 <AdminContent type="about" data={config} refresh={fetchData} />
             )}
 
+            {activeTab === 'feature' && (
+                <AdminContent type="feature" data={config} refresh={fetchData} />
+            )}
+
             {activeTab === 'comments' && (
                 <AdminContent type="comments" items={comments} refresh={fetchData} />
             )}

@@ -23,9 +23,15 @@ export async function POST(req: NextRequest) {
         const aboutFile2 = formData.get('aboutFile2') as File | null
         const aboutFile3 = formData.get('aboutFile3') as File | null
 
+        const featureFile = formData.get('featureFile') as File | null
+        const featureFile2 = formData.get('featureFile2') as File | null
+        const featureFile3 = formData.get('featureFile3') as File | null
+
         const tagline = formData.get('tagline') as string | null
         const bannerText = formData.get('bannerText') as string | null
         const aboutContent = formData.get('aboutContent') as string | null
+        const featureContent = formData.get('featureContent') as string | null
+        const featureStoreLink = formData.get('featureStoreLink') as string | null
         const heroHeight = formData.get('heroHeight') as string | null
 
         const footerText = formData.get('footerText') as string | null
@@ -49,13 +55,16 @@ export async function POST(req: NextRequest) {
         if (aboutFile) updateData.aboutImagePath = await uploadFile(aboutFile, 'about')
         if (aboutFile2) updateData.aboutImage2Path = await uploadFile(aboutFile2, 'about')
         if (aboutFile3) updateData.aboutImage3Path = await uploadFile(aboutFile3, 'about')
+        
+        if (featureFile) updateData.featureImagePath = await uploadFile(featureFile, 'feature')
+        if (featureFile2) updateData.featureImage2Path = await uploadFile(featureFile2, 'feature')
+        if (featureFile3) updateData.featureImage3Path = await uploadFile(featureFile3, 'feature')
 
         if (tagline !== null) updateData.tagline = tagline
         if (bannerText !== null) updateData.bannerText = bannerText
         if (aboutContent !== null) updateData.aboutContent = aboutContent
-        if (tagline !== null) updateData.tagline = tagline
-        if (bannerText !== null) updateData.bannerText = bannerText
-        if (aboutContent !== null) updateData.aboutContent = aboutContent
+        if (featureContent !== null) updateData.featureContent = featureContent
+        if (featureStoreLink !== null) updateData.featureStoreLink = featureStoreLink
         if (heroHeight !== null) updateData.heroHeight = heroHeight
         const logoScale = formData.get('logoScale')
         if (logoScale) updateData.logoScale = parseInt(logoScale.toString(), 10)
@@ -87,7 +96,7 @@ export async function DELETE(req: NextRequest) {
     const field = searchParams.get('field')
     if (!field) return NextResponse.json({ error: 'Field required' }, { status: 400 })
 
-    const allowed = ['landingImagePath', 'logoPath', 'parallaxImagePath', 'heroImagePath', 'aboutImagePath', 'aboutImage2Path', 'aboutImage3Path']
+    const allowed = ['landingImagePath', 'logoPath', 'parallaxImagePath', 'heroImagePath', 'aboutImagePath', 'aboutImage2Path', 'aboutImage3Path', 'featureImagePath', 'featureImage2Path', 'featureImage3Path']
     if (!allowed.includes(field)) return NextResponse.json({ error: 'Invalid field' }, { status: 400 })
 
     try {

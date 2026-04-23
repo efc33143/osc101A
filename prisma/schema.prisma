@@ -76,6 +76,13 @@ model SiteConfig {
   aboutImagePath   String?
   aboutImage2Path  String?
   aboutImage3Path  String?
+  
+  featureContent   String?
+  featureStoreLink String?
+  featureImagePath String?
+  featureImage2Path String?
+  featureImage3Path String?
+
   heroHeight       String?
   heroImagePath    String?
   heroBlur         Int?    @default(7)

@@ -78,10 +78,10 @@ export default function Header({
             <div className={styles.bottomFade} />
 
             {bannerText && (
-                <div className={styles.floatingBanner}>
+                <Link href="/feature" className={styles.floatingBanner}>
                     <span className={styles.bannerIcon}>✦</span>
                     <span className={styles.bannerTextContent}>{bannerText}</span>
-                </div>
+                </Link>
             )}
 
             <Link

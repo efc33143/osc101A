@@ -5,8 +5,8 @@ import { useState } from 'react'
 import styles from './Admin.module.css'
 
 interface AdminContentProps {
-    type: 'about' | 'comments' | 'messages'
-    data?: any // Config for about
+    type: 'about' | 'feature' | 'comments' | 'messages'
+    data?: any // Config for about or feature
     items?: any[] // Comments or Messages
     refresh: () => void
 }
@@ -18,6 +18,13 @@ export default function AdminContent({ type, data, items = [], refresh }: AdminC
     const [f2, setF2] = useState<File | null>(null)
     const [f3, setF3] = useState<File | null>(null)
 
+    // Feature State
+    const [featureContent, setFeatureContent] = useState(data?.featureContent || '')
+    const [featureStoreLink, setFeatureStoreLink] = useState(data?.featureStoreLink || '')
+    const [ff1, setFF1] = useState<File | null>(null)
+    const [ff2, setFF2] = useState<File | null>(null)
+    const [ff3, setFF3] = useState<File | null>(null)
+
     const handleUpdateAbout = async () => {
         const fd = new FormData()
         fd.append('aboutContent', aboutContent)
@@ -28,6 +35,19 @@ export default function AdminContent({ type, data, items = [], refresh }: AdminC
         setF1(null); setF2(null); setF3(null)
         refresh()
         alert('ABOUT PAGE UPDATED')
+    }
+
+    const handleUpdateFeature = async () => {
+        const fd = new FormData()
+        fd.append('featureContent', featureContent)
+        fd.append('featureStoreLink', featureStoreLink)
+        if (ff1) fd.append('featureFile', ff1)
+        if (ff2) fd.append('featureFile2', ff2)
+        if (ff3) fd.append('featureFile3', ff3)
+        await fetch('/api/config', { method: 'POST', body: fd })
+        setFF1(null); setFF2(null); setFF3(null)
+        refresh()
+        alert('FEATURE PAGE UPDATED')
     }
 
     const handleDeleteAsset = async (field: string) => {
@@ -79,6 +99,44 @@ export default function AdminContent({ type, data, items = [], refresh }: AdminC
                         placeholder="Bio content..."
                     />
                     <button onClick={handleUpdateAbout} className={styles.btn}>SAVE CHANGES</button>
+                </div>
+            </div>
+        )
+    }
+
+    if (type === 'feature') {
+        return (
+            <div className={styles.panel}>
+                <h2 className={styles.panelTitle}>BANNER FEATURE PAGE CONTENT</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                        {[
+                            { l: 'IMG 1', s: setFF1, k: 'featureImagePath' },
+                            { l: 'IMG 2', s: setFF2, k: 'featureImage2Path' },
+                            { l: 'IMG 3', s: setFF3, k: 'featureImage3Path' }
+                        ].map((img, i) => (
+                            <div key={i} style={{ padding: '1rem', border: '1px solid #333' }}>
+                                <h4>{img.l}</h4>
+                                <input type="file" onChange={e => img.s(e.target.files?.[0] || null)} style={{ color: 'white', margin: '0.5rem 0', width: '100%' }} />
+                                <button onClick={() => handleDeleteAsset(img.k)} className={styles.btnDanger} style={{ width: '100%' }}>DELETE PREVIOUS</button>
+                            </div>
+                        ))}
+                    </div>
+                    <input 
+                        type="text" 
+                        value={featureStoreLink}
+                        onChange={e => setFeatureStoreLink(e.target.value)}
+                        className={styles.input}
+                        placeholder="Store or Destination Link URL..."
+                    />
+                    <textarea
+                        value={featureContent}
+                        onChange={e => setFeatureContent(e.target.value)}
+                        className={styles.textarea}
+                        style={{ minHeight: '300px' }}
+                        placeholder="Feature description content..."
+                    />
+                    <button onClick={handleUpdateFeature} className={styles.btn}>SAVE CHANGES</button>
                 </div>
             </div>
         )
