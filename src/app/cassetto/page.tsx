@@ -9,6 +9,7 @@ import Header from '@/components/Header'
 
 export default function CassettoPage() {
     const [config, setConfig] = useState<any>(null)
+    const [showModal, setShowModal] = useState(false)
 
     useEffect(() => {
         fetch('/api/config')
@@ -175,11 +176,21 @@ export default function CassettoPage() {
                     <p style={{ marginBottom: '2rem', color: 'var(--silver)' }}>
                         Currently in closed beta testing. Coming soon to the Google Play Store.
                     </p>
-                    <a href="#" className={styles.ctaButton} onClick={(e) => { e.preventDefault(); alert('Closed Beta Testing - Downloads currently disabled.') }}>
+                    <a href="#" className={styles.ctaButton} onClick={(e) => { e.preventDefault(); setShowModal(true); }}>
                         DOWNLOAD NOW
                     </a>
                 </section>
             </main>
+
+            {showModal && (
+                <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>
+                    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                        <h3 className={styles.modalHeader}>OSC101MUSIC</h3>
+                        <p className={styles.modalText}>Closed Beta Testing - Downloads currently disabled.</p>
+                        <button className={styles.modalCloseBtn} onClick={() => setShowModal(false)}>OK</button>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
