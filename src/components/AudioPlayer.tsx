@@ -70,7 +70,7 @@ export default function AudioPlayer({ track, onNext, onPrev }: any) {
             flexDirection: 'column',
             gap: '0.5rem'
         }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                     <h3 style={{ color: 'var(--gold)', fontSize: '1rem' }}>{track.title}</h3>
                     <p style={{ color: 'var(--silver)', fontSize: '0.8rem' }}>{track.group?.name || 'UNKNOWN SOURCE'}</p>

@@ -64,7 +64,10 @@ export default function TrackList({ tracks, selectedGroup, currentTrack, onSelec
                             <span style={{
                                 color: isPlaying ? 'var(--gold)' : 'white',
                                 fontWeight: isPlaying ? 'bold' : 'normal',
-                                textShadow: isPlaying ? '0 0 10px rgba(255, 215, 0, 0.5)' : 'none'
+                                textShadow: isPlaying ? '0 0 10px rgba(255, 215, 0, 0.5)' : 'none',
+                                wordBreak: 'break-word',
+                                flex: 1,
+                                minWidth: 0
                             }}>
                                 {track.title}
                             </span>

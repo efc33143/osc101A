@@ -62,7 +62,7 @@ export default function TrackDetails({ track, onAddToQueue, onPlay }: TrackDetai
 
                     <h1 className={styles.title}>{track.title}</h1>
 
-                    <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
                         <button
                             onClick={() => onPlay(track)}
                             style={{
