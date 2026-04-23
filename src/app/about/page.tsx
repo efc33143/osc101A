@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import SystemLogFooter from '@/components/SystemLogFooter'
 
 export default function About() {
     const [content, setContent] = useState('Loading transmission...')
@@ -46,6 +47,8 @@ export default function About() {
                     {content}
                 </div>
             </div>
+
+            <SystemLogFooter />
 
             {/* Responsive Styles Injection */}
             <style jsx global>{`

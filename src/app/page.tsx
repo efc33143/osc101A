@@ -11,6 +11,7 @@ import Header from '@/components/Header'
 import CommentSection from '@/components/CommentSection'
 import Footer from '@/components/Footer'
 import TagFilter from '@/components/TagFilter'
+import SystemLogFooter from '@/components/SystemLogFooter'
 
 export default function Home() {
   const [tracks, setTracks] = useState([])
@@ -139,6 +140,21 @@ export default function Home() {
 
   return (
     <div className={styles.main}>
+      <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "MusicPlaylist",
+                  "name": "OSC101 Transmissions",
+                  "description": "Exclusive underground Electro, House, and Trip Hop transmissions.",
+                  "numTracks": tracks.length
+              })
+          }}
+      />
+      <div className="sr-only">
+        OSC101 is a curated platform for independent electronic music, specializing in Breakbeat, House, and Lo-fi Trip Hop.
+      </div>
       <Header
         logoPath={logoPath}
         parallaxImage={parallaxImage}
@@ -180,6 +196,8 @@ export default function Home() {
         </div>
 
       </div>
+
+      <SystemLogFooter />
 
       <div style={{ position: 'relative' }}>
         {/* Queue Overlay, could be toggleable in future but for now always visible if items exist */}

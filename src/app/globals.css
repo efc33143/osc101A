@@ -87,6 +87,19 @@ a:hover {
   text-shadow: 0 0 10px rgba(255, 1, 0, 0.5);
 }
 
+/* Screen Reader Only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* Animations */
 @keyframes spin {
   from {

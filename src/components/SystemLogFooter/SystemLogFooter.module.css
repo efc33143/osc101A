@@ -1,0 +1,40 @@
+.systemLog {
+  max-width: 800px; /* Constrain width to align with central content */
+  margin: 6rem auto 2rem auto; /* Significant top margin */
+  padding: 0 1rem;
+  background: transparent; /* Remove bulky container */
+  border: none;
+  font-family: 'Courier New', Courier, monospace;
+  color: #555; /* Dark grey, dim text */
+  z-index: 5;
+  position: relative;
+  text-align: left;
+}
+
+.logTitle {
+  font-family: var(--font-heading), monospace;
+  color: rgba(255, 0, 0, 0.5); /* 50% opacity red */
+  font-size: 0.8rem; /* Small headline */
+  font-weight: normal; /* Light weight */
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  animation: flicker 4s infinite;
+  text-align: left;
+}
+
+.logText {
+  font-size: 12px; /* Scale down */
+  line-height: 2.2; /* Prevent text wall */
+  margin-bottom: 1rem;
+  color: #444; /* Very dim grey */
+}
+
+@keyframes flicker {
+  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+    opacity: 0.8;
+  }
+  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+    opacity: 0.2;
+  }
+}

@@ -37,7 +37,7 @@ export default function Header({
     return (
         <header className={styles.hero} style={{ height: heroHeight }}>
             {/* Top-Left Ghost Nav for Cassetto */}
-            <Link href="/cassetto" className={styles.ghostNav}>
+            <Link href="/cassetto" className={styles.ghostNav} rel="internal" title="Cassetto - Independent Music Distribution Platform">
                 PROJECT: CASSETTO
             </Link>
 
@@ -96,14 +96,17 @@ export default function Header({
             >
                 <div className={styles.brandGroup}>
                     {logoPath ? (
-                        <img
-                            src={logoPath}
-                            alt="Logo"
-                            className={styles.logo}
-                            style={{ maxHeight: `min(100%, ${400 * (logoScale / 100)}px)` }}
-                        />
+                        <h1 style={{ display: 'contents' }}>
+                            <span className="sr-only">OSC101 MUSIC</span>
+                            <img
+                                src={logoPath}
+                                alt="OSC101 Music Brand Logo"
+                                className={styles.logo}
+                                style={{ maxHeight: `min(100%, ${400 * (logoScale / 100)}px)` }}
+                            />
+                        </h1>
                     ) : (
-                        <h1 className={styles.fallbackTitle}>ALIVE 2026</h1>
+                        <h1 className={styles.fallbackTitle}>OSC101 MUSIC</h1>
                     )}
                     <p className={styles.tagline}>{tagline}</p>
                 </div>

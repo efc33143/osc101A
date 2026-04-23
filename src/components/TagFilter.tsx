@@ -20,7 +20,7 @@ export default function TagFilter({ tags, selectedTag, onSelectTag }: TagFilterP
             flexWrap: 'wrap',
             alignItems: 'center'
         }}>
-            <span style={{ color: 'var(--silver)', fontSize: '0.8rem', marginRight: '0.5rem' }}>TAGS:</span>
+            <h2 style={{ color: 'var(--silver)', fontSize: '0.8rem', marginRight: '0.5rem', margin: 0, fontWeight: 'normal', display: 'inline', alignSelf: 'center', letterSpacing: '2px', fontFamily: 'var(--font-heading)' }}>TAGS:</h2>
             <button
                 onClick={() => onSelectTag(null)}
                 style={{

@@ -4,8 +4,9 @@ import Footer from '@/components/Footer'
 import prisma from '@/lib/db'
 
 export const metadata: Metadata = {
-  title: 'Daft Punk Tribute',
-  description: 'Listen to the legends.',
+  title: 'OSC101 MUSIC | Underground Electro, House, & Trip Hop Transmissions',
+  description: 'Discover the underground sound of OSC101. Stream exclusive Electro, House Music, and Trip Hop transmissions. The source for independent electronic signals.',
+  keywords: ['OSC101MUSIC', 'Underground House', 'Experimental Electronic'],
 }
 
 export const dynamic = 'force-dynamic'

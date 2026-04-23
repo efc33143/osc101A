@@ -59,7 +59,7 @@ export default function TrackList({ tracks, selectedGroup, currentTrack, onSelec
                             }}
                         >
                             {track.imagePath && (
-                                <img src={track.imagePath} alt="" className={styles.thumbnail} />
+                                <img src={track.imagePath} alt={`OSC101 Music - ${track.title} - Underground House Transmission`} loading="lazy" className={styles.thumbnail} />
                             )}
                             <span style={{
                                 color: isPlaying ? 'var(--gold)' : 'white',
