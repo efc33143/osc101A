@@ -19,10 +19,36 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
         }
 
+        // Check if locked out
+        if (user.lockoutUntil && new Date() < user.lockoutUntil) {
+            const minutesLeft = Math.ceil((user.lockoutUntil.getTime() - new Date().getTime()) / 60000)
+            return NextResponse.json({ error: `Account locked. Try again in ${minutesLeft} minutes.` }, { status: 429 })
+        }
+
         const isValid = await bcrypt.compare(password, user.password)
 
         if (!isValid) {
+            const attempts = user.failedAttempts + 1
+            let lockoutUntil = null
+            
+            if (attempts >= 3) {
+                lockoutUntil = new Date(Date.now() + 15 * 60 * 1000) // 15 mins from now
+            }
+            
+            await prisma.user.update({
+                where: { id: user.id },
+                data: { failedAttempts: attempts, lockoutUntil }
+            })
+
             return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
+        }
+
+        // Reset failed attempts on success
+        if (user.failedAttempts > 0 || user.lockoutUntil) {
+            await prisma.user.update({
+                where: { id: user.id },
+                data: { failedAttempts: 0, lockoutUntil: null }
+            })
         }
 
         // Create session
