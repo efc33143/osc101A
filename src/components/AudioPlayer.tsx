@@ -9,6 +9,7 @@ export default function AudioPlayer({ track, onNext, onPrev }: any) {
     const [duration, setDuration] = useState(0)
 
     const currentTrackId = useRef<string | null>(null)
+    const audioCtxInitialized = useRef(false)
 
     useEffect(() => {
         if (track && audioRef.current) {
@@ -24,6 +25,33 @@ export default function AudioPlayer({ track, onNext, onPrev }: any) {
 
     const handlePlay = () => {
         console.log('Audio Engine: PLAYING')
+
+        // Initialize Web Audio API on first play (requires user interaction)
+        if (!audioCtxInitialized.current && audioRef.current) {
+            try {
+                const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+                if (AudioContextClass) {
+                    const audioCtx = new AudioContextClass();
+                    const analyser = audioCtx.createAnalyser();
+                    analyser.fftSize = 256; // Gives 128 frequency bins
+                    analyser.smoothingTimeConstant = 0.92; // Creates a floating/slower fade effect
+                    analyser.maxDecibels = -5;  // Massive headroom to prevent bass clipping at 255
+                    analyser.minDecibels = -85; // Tighten floor slightly
+                    
+                    const source = audioCtx.createMediaElementSource(audioRef.current);
+                    source.connect(analyser);
+                    analyser.connect(audioCtx.destination);
+                    
+                    (window as any).__audioAnalyser = analyser;
+                    (window as any).__freqData = new Uint8Array(analyser.frequencyBinCount);
+                    
+                    audioCtxInitialized.current = true;
+                }
+            } catch (err) {
+                console.error("Web Audio API failed to initialize", err);
+            }
+        }
+
         if (track && currentTrackId.current !== track.id) {
             currentTrackId.current = track.id
             fetch(`/api/tracks/${track.id}/play`, { method: 'POST' }).catch(console.error)
@@ -97,8 +125,8 @@ export default function AudioPlayer({ track, onNext, onPrev }: any) {
 
             <audio
                 ref={audioRef}
-                key={track?.id} // Force re-mount on track change
                 autoPlay
+                crossOrigin="anonymous"
                 onTimeUpdate={handleTimeUpdate}
                 onEnded={onNext}
                 onPlay={handlePlay}

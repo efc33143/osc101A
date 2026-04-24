@@ -2,7 +2,9 @@
     background: var(--panel-bg);
     border: 1px solid var(--gold);
     padding: 2rem;
+    padding-bottom: 220px; /* Reserve space for visualizer */
     height: 100%;
+    position: relative;
     animation: fadeIn 0.5s ease-out;
 }
 
