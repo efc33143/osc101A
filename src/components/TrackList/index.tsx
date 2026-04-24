@@ -8,6 +8,8 @@ import styles from './TrackList.module.css'
 interface Track {
     id: string
     title: string
+    artist?: string | null
+    version?: string | null
     groupId: string | null
     imagePath?: string | null
     description?: string | null
@@ -75,16 +77,55 @@ export default function TrackList({ tracks, selectedGroup, currentTrack, onSelec
                             {track.imagePath && (
                                 <img src={track.imagePath} alt={`OSC101 Music - ${track.title} - Underground House Transmission`} loading="lazy" className={styles.thumbnail} />
                             )}
-                            <span style={{
-                                color: isPlaying ? 'var(--gold)' : 'white',
-                                fontWeight: isPlaying ? 'bold' : 'normal',
-                                textShadow: isPlaying ? '0 0 10px rgba(255, 215, 0, 0.5)' : 'none',
-                                wordBreak: 'break-word',
+                            <div style={{
                                 flex: 1,
-                                minWidth: 0
+                                minWidth: 0,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                gap: '1rem'
                             }}>
-                                {track.title}
-                            </span>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                                    <span style={{
+                                        color: isPlaying ? 'var(--gold)' : 'white',
+                                        fontWeight: isPlaying ? 'bold' : 'normal',
+                                        textShadow: isPlaying ? '0 0 10px rgba(255, 215, 0, 0.5)' : 'none',
+                                        wordBreak: 'break-word',
+                                        fontSize: '1rem',
+                                        letterSpacing: '1px'
+                                    }}>
+                                        {track.title}
+                                    </span>
+                                    {track.artist && (
+                                        <span style={{
+                                            color: isPlaying ? 'var(--gold)' : 'var(--silver)',
+                                            fontSize: '0.8rem',
+                                            opacity: isPlaying ? 1 : 0.7,
+                                            fontWeight: 'normal',
+                                            textShadow: 'none',
+                                            letterSpacing: '0.5px'
+                                        }}>
+                                            {track.artist}
+                                        </span>
+                                    )}
+                                </div>
+                                {track.version && (
+                                    <span style={{
+                                        fontSize: '0.65rem',
+                                        color: isPlaying ? 'var(--gold)' : 'var(--silver)',
+                                        opacity: isPlaying ? 1 : 0.5,
+                                        fontWeight: 'normal',
+                                        textShadow: 'none',
+                                        whiteSpace: 'nowrap',
+                                        border: isPlaying ? '1px solid var(--gold)' : '1px solid rgba(255, 255, 255, 0.2)',
+                                        padding: '0.15rem 0.4rem',
+                                        borderRadius: '3px',
+                                        letterSpacing: '1px'
+                                    }}>
+                                        {track.version}
+                                    </span>
+                                )}
+                            </div>
                             {isPlaying && (
                                 <span className={styles.playingIndicator}>PLAYING</span>
                             )}

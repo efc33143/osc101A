@@ -33,6 +33,8 @@ model Group {
 model Track {
   id          String   @id @default(uuid())
   title       String
+  artist      String?
+  version     String?
   filePath    String
   description String?
   uploadDate  DateTime @default(now())

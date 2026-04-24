@@ -50,6 +50,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         if (contentType.includes('multipart/form-data')) {
             const formData = await req.formData()
             updateData.title = formData.get('title') as string
+            updateData.artist = formData.get('artist') as string
+            updateData.version = formData.get('version') as string
             updateData.description = formData.get('description') as string
 
             const groupId = formData.get('groupId') as string
@@ -84,9 +86,23 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             const data = await req.json()
             updateData = {
                 title: data.title,
+                artist: data.artist,
+                version: data.version,
                 description: data.description,
                 groupId: data.groupId || null,
                 tags: data.tagIds ? { set: data.tagIds.map((id: string) => ({ id })) } : undefined
+            }
+
+            if (data.removeImage || data.imagePath) {
+                const oldTrack = await prisma.track.findUnique({ where: { id }, select: { imagePath: true } })
+                if (oldTrack?.imagePath) await deleteAsset(oldTrack.imagePath)
+
+                if (data.removeImage) {
+                    updateData.imagePath = null
+                }
+                if (data.imagePath) {
+                    updateData.imagePath = data.imagePath
+                }
             }
         }
 

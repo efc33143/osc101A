@@ -5,6 +5,8 @@ import CommentSection from '@/components/CommentSection'
 interface Track {
     id: string
     title: string
+    artist?: string | null
+    version?: string | null
     groupId: string | null
     imagePath?: string | null
     description?: string | null
@@ -60,7 +62,11 @@ export default function TrackDetails({ track, onAddToQueue, onPlay }: TrackDetai
                         ))}
                     </div>
 
-                    <h1 className={styles.title}>{track.title}</h1>
+                    <h1 className={styles.title}>
+                        {track.artist && <span style={{ fontSize: '1rem', display: 'block', color: 'var(--silver)', marginBottom: '0.2rem' }}>{track.artist}</span>}
+                        {track.title}
+                        {track.version && <span style={{ fontSize: '0.9rem', color: 'var(--gold)', marginLeft: '0.5rem', fontWeight: 'normal', opacity: 0.8 }}>{track.version}</span>}
+                    </h1>
 
                     <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
                         <button

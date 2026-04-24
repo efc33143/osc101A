@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { upload } from '@vercel/blob/client'
 // @ts-ignore
 import styles from './Admin.module.css'
@@ -17,6 +17,8 @@ export default function AdminTracks({ tracks, groups, tags, refresh }: AdminTrac
     const [trackFile, setTrackFile] = useState<File | null>(null)
     const [trackImage, setTrackImage] = useState<File | null>(null)
     const [trackTitle, setTrackTitle] = useState('')
+    const [trackArtist, setTrackArtist] = useState('')
+    const [trackVersion, setTrackVersion] = useState('')
     const [trackGroup, setTrackGroup] = useState('')
     const [trackDesc, setTrackDesc] = useState('')
     // Use a Set or Array for multiple selection
@@ -30,6 +32,18 @@ export default function AdminTracks({ tracks, groups, tags, refresh }: AdminTrac
     const [editingTrack, setEditingTrack] = useState<any>(null)
     const [editTrackImage, setEditTrackImage] = useState<File | null>(null)
     const [removeImage, setRemoveImage] = useState(false)
+
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1)
+    const TRACKS_PER_PAGE = 10
+
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [tracks.length])
+
+    const totalPages = Math.ceil(tracks.length / TRACKS_PER_PAGE)
+    const startIndex = (currentPage - 1) * TRACKS_PER_PAGE
+    const currentTracks = tracks.slice(startIndex, startIndex + TRACKS_PER_PAGE)
 
     // Helper to toggle tags
     const toggleTag = (tagId: string, currentTags: string[], setFn: (t: string[]) => void) => {
@@ -72,6 +86,8 @@ export default function AdminTracks({ tracks, groups, tags, refresh }: AdminTrac
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     title: trackTitle,
+                    artist: trackArtist,
+                    version: trackVersion,
                     description: trackDesc,
                     groupId: trackGroup,
                     filePath: newBlob.url,
@@ -85,6 +101,8 @@ export default function AdminTracks({ tracks, groups, tags, refresh }: AdminTrac
             setTrackFile(null)
             setTrackImage(null)
             setTrackTitle('')
+            setTrackArtist('')
+            setTrackVersion('')
             setTrackDesc('')
             setTrackGroup('')
             setSelectedTags([])
@@ -110,22 +128,48 @@ export default function AdminTracks({ tracks, groups, tags, refresh }: AdminTrac
         e.preventDefault()
         if (!editingTrack) return
 
-        const fd = new FormData()
-        fd.append('title', editingTrack.title)
-        fd.append('description', editingTrack.description || '')
-        fd.append('groupId', editingTrack.groupId || '')
-        if (editTrackImage) fd.append('imageFile', editTrackImage)
-        if (removeImage) fd.append('removeImage', 'true')
+        try {
+            setUploading(true) // Reusing the uploading state for the button feedback if we want, or just let it spin
+            
+            let newImagePath = undefined;
+            if (editTrackImage) {
+                const imgBlob = await upload(editTrackImage.name, editTrackImage, {
+                    access: 'public',
+                    handleUploadUrl: '/api/upload',
+                })
+                newImagePath = imgBlob.url
+            }
 
-        // Handle tags
-        const tagIds = editingTrack.tags?.map((t: any) => t.id) || []
-        fd.append('tagIds', JSON.stringify(tagIds))
+            const tagIds = editingTrack.tags?.map((t: any) => t.id) || []
 
-        await fetch(`/api/tracks/${editingTrack.id}`, { method: 'PUT', body: fd })
-        setEditingTrack(null)
-        setEditTrackImage(null)
-        setRemoveImage(false)
-        refresh()
+            const res = await fetch(`/api/tracks/${editingTrack.id}`, { 
+                method: 'PUT', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: editingTrack.title,
+                    artist: editingTrack.artist || '',
+                    version: editingTrack.version || '',
+                    description: editingTrack.description || '',
+                    groupId: editingTrack.groupId || '',
+                    tagIds: tagIds,
+                    removeImage: removeImage,
+                    imagePath: newImagePath
+                }) 
+            })
+
+            if (!res.ok) throw new Error('Update failed')
+
+            setEditingTrack(null)
+            setEditTrackImage(null)
+            setRemoveImage(false)
+            refresh()
+            alert('TRACK UPDATED SUCCESSFULLY')
+        } catch (error) {
+            console.error(error)
+            alert('UPDATE FAILED: ' + (error as Error).message)
+        } finally {
+            setUploading(false)
+        }
     }
 
     return (
@@ -139,6 +183,20 @@ export default function AdminTracks({ tracks, groups, tags, refresh }: AdminTrac
                         placeholder="TRACK TITLE"
                         value={trackTitle}
                         onChange={e => setTrackTitle(e.target.value)}
+                        className={styles.input}
+                    />
+                    <input
+                        type="text"
+                        placeholder="ARTIST / DJ (OPTIONAL)"
+                        value={trackArtist}
+                        onChange={e => setTrackArtist(e.target.value)}
+                        className={styles.input}
+                    />
+                    <input
+                        type="text"
+                        placeholder="VERSION (OPTIONAL)"
+                        value={trackVersion}
+                        onChange={e => setTrackVersion(e.target.value)}
                         className={styles.input}
                     />
                     <textarea
@@ -211,7 +269,7 @@ export default function AdminTracks({ tracks, groups, tags, refresh }: AdminTrac
             <div className={styles.panel}>
                 <h2 className={styles.panelTitle}>TRACK DATABASE</h2>
                 <ul className={styles.list}>
-                    {tracks.map((t: any) => (
+                    {currentTracks.map((t: any) => (
                         <li key={t.id} className={styles.listItem}>
                             {editingTrack?.id === t.id ? (
                                 <form onSubmit={handleUpdateTrack} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -220,6 +278,18 @@ export default function AdminTracks({ tracks, groups, tags, refresh }: AdminTrac
                                         onChange={e => setEditingTrack({ ...editingTrack, title: e.target.value })}
                                         className={styles.input}
                                         placeholder="TRACK TITLE"
+                                    />
+                                    <input
+                                        value={editingTrack.artist || ''}
+                                        onChange={e => setEditingTrack({ ...editingTrack, artist: e.target.value })}
+                                        className={styles.input}
+                                        placeholder="ARTIST / DJ"
+                                    />
+                                    <input
+                                        value={editingTrack.version || ''}
+                                        onChange={e => setEditingTrack({ ...editingTrack, version: e.target.value })}
+                                        className={styles.input}
+                                        placeholder="VERSION"
                                     />
                                     <textarea
                                         value={editingTrack.description || ''}
@@ -309,7 +379,11 @@ export default function AdminTracks({ tracks, groups, tags, refresh }: AdminTrac
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                                         {t.imagePath && <img src={t.imagePath} alt="cover" style={{ width: '50px', height: '50px', objectFit: 'cover', border: '1px solid var(--gold)' }} />}
                                         <div>
-                                            <div style={{ fontWeight: 'bold', color: 'white' }}>{t.title}</div>
+                                            <div style={{ fontWeight: 'bold', color: 'white' }}>
+                                                {t.artist && <span style={{ marginRight: '0.3rem', color: 'var(--silver)' }}>{t.artist} -</span>}
+                                                {t.title}
+                                                {t.version && <span style={{ marginLeft: '0.5rem', fontSize: '0.7rem', color: 'var(--silver)' }}>{t.version}</span>}
+                                            </div>
                                             <div style={{ fontSize: '0.8rem', color: 'var(--silver)' }}>{t.group?.name || 'NO GROUP'}</div>
                                             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.2rem' }}>
                                                 {t.tags?.map((tag: any) => (
@@ -330,6 +404,30 @@ export default function AdminTracks({ tracks, groups, tags, refresh }: AdminTrac
                         </li>
                     ))}
                 </ul>
+
+                {totalPages > 1 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--grid-line)' }}>
+                        <button 
+                            disabled={currentPage === 1} 
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            className={styles.btnSecondary}
+                            style={{ opacity: currentPage === 1 ? 0.5 : 1, cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+                        >
+                            &lt; PREV
+                        </button>
+                        <span style={{ color: 'var(--silver)', fontFamily: 'var(--font-heading)', fontSize: '0.8rem', letterSpacing: '2px' }}>
+                            PAGE {currentPage} OF {totalPages}
+                        </span>
+                        <button 
+                            disabled={currentPage === totalPages} 
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            className={styles.btnSecondary}
+                            style={{ opacity: currentPage === totalPages ? 0.5 : 1, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
+                        >
+                            NEXT &gt;
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     )

@@ -17,13 +17,15 @@ export async function POST(req: NextRequest) {
 
     try {
         const body = await req.json()
-        const { title, description, groupId, filePath, imagePath, tagIds } = body
+        const { title, artist, version, description, groupId, filePath, imagePath, tagIds } = body
 
         if (!filePath || !title) return NextResponse.json({ error: 'File path and Title required' }, { status: 400 })
 
         const track = await prisma.track.create({
             data: {
                 title,
+                artist,
+                version,
                 description,
                 filePath,
                 imagePath: imagePath || null,
