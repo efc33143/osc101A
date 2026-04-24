@@ -103,3 +103,42 @@
         word-break: break-word;
     }
 }
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--grid-line);
+}
+
+.pageBtn {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 0.4rem 0.8rem;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+}
+
+.pageBtn:hover:not(:disabled) {
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.pageBtn:disabled {
+    color: #555;
+    border-color: #333;
+    cursor: not-allowed;
+}
+
+.pageInfo {
+    color: var(--silver);
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+}

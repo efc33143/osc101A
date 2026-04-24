@@ -1,5 +1,7 @@
 'use client'
 
+import { useState, useEffect } from 'react'
+
 // @ts-ignore
 import styles from './TrackList.module.css'
 
@@ -34,6 +36,18 @@ export default function TrackList({ tracks, selectedGroup, currentTrack, onSelec
 
     const groupName = tracks.find(t => t.groupId === selectedGroup)?.group?.name || 'GROUP ARCHIVE'
 
+    // Pagination logic
+    const [currentPage, setCurrentPage] = useState(1)
+    const TRACKS_PER_PAGE = 10
+
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [selectedGroup, tracks.length])
+
+    const totalPages = Math.ceil(tracks.length / TRACKS_PER_PAGE)
+    const startIndex = (currentPage - 1) * TRACKS_PER_PAGE
+    const currentTracks = tracks.slice(startIndex, startIndex + TRACKS_PER_PAGE)
+
     return (
         <div className={styles.container}>
             <h2 className={styles.header}>
@@ -43,8 +57,8 @@ export default function TrackList({ tracks, selectedGroup, currentTrack, onSelec
                 </span>
             </h2>
 
-            <ul className={styles.list} key={`${selectedGroup}-${tracks.length}`}>
-                {tracks.map(track => {
+            <ul className={styles.list} key={`${selectedGroup}-${currentPage}`}>
+                {currentTracks.map(track => {
                     const isPlaying = currentTrack?.id === track.id
                     // Only highlight playing if we are actually playing (not just selected)
                     // Re-reading usage: currentTrack IS the playing track. 
@@ -82,6 +96,28 @@ export default function TrackList({ tracks, selectedGroup, currentTrack, onSelec
                     <p className={styles.emptyState}>NO DATA AVAILABLE</p>
                 )}
             </ul>
+
+            {totalPages > 1 && (
+                <div className={styles.pagination}>
+                    <button 
+                        disabled={currentPage === 1} 
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        className={styles.pageBtn}
+                    >
+                        &lt; PREV
+                    </button>
+                    <span className={styles.pageInfo}>
+                        PAGE {currentPage} OF {totalPages}
+                    </span>
+                    <button 
+                        disabled={currentPage === totalPages} 
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        className={styles.pageBtn}
+                    >
+                        NEXT &gt;
+                    </button>
+                </div>
+            )}
         </div>
     )
 }

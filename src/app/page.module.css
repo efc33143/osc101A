@@ -48,8 +48,6 @@
   display: grid;
   grid-template-columns: 400px 1fr;
   gap: 2rem;
-  height: 800px;
-  /* Fixed height for scrolling lists */
 }
 
 @media (max-width: 1024px) {
