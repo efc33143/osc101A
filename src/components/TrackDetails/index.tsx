@@ -99,7 +99,7 @@ export default function TrackDetails({ track, onAddToQueue, onPlay }: TrackDetai
                 // If it's lower, let the bar float down slowly.
                 if (targetHeight < currentBarHeights[i]) {
                     // Decrease by a set amount of pixels per frame (adjust for float speed)
-                    currentBarHeights[i] -= 0.5 
+                    currentBarHeights[i] -= 1.5 
                     if (currentBarHeights[i] < targetHeight) {
                         currentBarHeights[i] = targetHeight
                     }
