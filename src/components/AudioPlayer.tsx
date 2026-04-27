@@ -34,7 +34,7 @@ export default function AudioPlayer({ track, onNext, onPrev }: any) {
                     const audioCtx = new AudioContextClass();
                     const analyser = audioCtx.createAnalyser();
                     analyser.fftSize = 256; // Gives 128 frequency bins
-                    analyser.smoothingTimeConstant = 0.92; // Creates a floating/slower fade effect
+                    analyser.smoothingTimeConstant = 0.85; // Snappy raw data; slow fall handled by custom canvas math
                     analyser.maxDecibels = -5;  // Massive headroom to prevent bass clipping at 255
                     analyser.minDecibels = -85; // Tighten floor slightly
                     

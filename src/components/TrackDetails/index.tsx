@@ -45,6 +45,9 @@ export default function TrackDetails({ track, onAddToQueue, onPlay }: TrackDetai
             }
         }
 
+        // Array to track the current height of each bar for custom floating decay
+        const currentBarHeights = new Array(128).fill(0)
+
         const draw = () => {
             resize()
             animationId = requestAnimationFrame(draw)
@@ -88,19 +91,37 @@ export default function TrackDetails({ track, onAddToQueue, onPlay }: TrackDetai
                 // Hard cap at 0.98 so it never perfectly squares off against the very top edge
                 normalized = Math.min(0.98, normalized)
 
-                // Scale to canvas height
-                let barHeight = normalized * canvas.height
+                // Scale to target height
+                let targetHeight = normalized * canvas.height
                 
-                // Keep a minimum height for subtle idle visibility
+                // Custom Floating Peak Decay:
+                // If the new target is higher, snap to it instantly for punchy reaction.
+                // If it's lower, let the bar float down slowly.
+                if (targetHeight < currentBarHeights[i]) {
+                    // Decrease by a set amount of pixels per frame (adjust for float speed)
+                    currentBarHeights[i] -= 0.5 
+                    if (currentBarHeights[i] < targetHeight) {
+                        currentBarHeights[i] = targetHeight
+                    }
+                } else {
+                    currentBarHeights[i] = targetHeight
+                }
+                
+                let barHeight = currentBarHeights[i]
+                
+                // Ensure a minimum visual height
                 if (barHeight < 1) barHeight = 1
 
                 const x = i * (barWidth + gap)
                 const y = canvas.height - barHeight
 
-                // Subtle red glow
-                ctx.fillStyle = `rgba(255, ${Math.max(0, 50 - normalized * 50)}, ${Math.max(0, 50 - normalized * 50)}, ${0.4 + normalized * 0.6})`
+                // Dynamic alpha: Louder bars are more opaque
+                const alpha = 0.4 + normalized * 0.6
+
+                // Revert to solid brand red
+                ctx.fillStyle = `rgba(255, 0, 0, ${alpha})`
                 ctx.shadowBlur = 10
-                ctx.shadowColor = 'rgba(255, 0, 0, 0.8)'
+                ctx.shadowColor = `rgba(255, 0, 0, 0.8)`
                 
                 ctx.fillRect(x, y, barWidth, barHeight)
                 
